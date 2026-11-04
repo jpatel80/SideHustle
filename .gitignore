@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+.env.*
+# generated book assets stay local; keep briefs and listings
+books/*/pages/
+books/*/*.pdf

@@ -178,3 +178,10 @@ Your Claude subscription is the main ongoing cost and is not counted above.
 - **Pen name:** KDP account and tax info use the legal name; the pen name goes in each book's Author field. Choose it before the first publish, since changing it later is reportedly restricted **[verify]**. Name shortlist is in the chat thread; clear any final pick on Amazon, Etsy, USPTO and domains before publishing.
 - **Network:** this cloud session cannot reach `kdp.amazon.com`, so Claude cannot pre-fill KDP forms from here. Plan for you to do the upload (about 10-15 min/book from files Claude prepares), or later run Claude Code locally with Playwright.
 - **Secrets:** API keys go in the environment's settings as an environment variable (e.g. `OPENAI_API_KEY`), never in chat or the repo.
+
+### Update 2026-11-05
+
+- **Image generator: OpenRouter instead of OpenAI direct.** One key, one prepaid balance, swap models by changing a slug. Reported options: GPT Image 2 (token-priced; $0.006-$0.211 per image depending on quality), FLUX 3 Image (from ~$0.041), Meta Muse Image (~$0.01), Recraft v4.1 vector (SVG output, ~$0.08). **[verify]** live prices at openrouter.ai. Needs `openrouter.ai` in the environment's allowed domains and the key stored as `OPENROUTER_API_KEY`. The generator script is not written yet: I could not read OpenRouter's docs from this session and will not code against an unverified API shape.
+- **PDF toolkit built:** `scripts/build_interior.py` (qa / build / cover-dims) with 13 passing tests. It caught and fixed one real bug: un-embedded Helvetica, which KDP rejects.
+- **Top-3 names re-checked** (web search only; the trademark database was unreachable): Little Fox Paper Co (no direct conflicts found), Moth & Marigold (old MARIGOLD AND MOTH mark for jewelry/textiles, status unknown), Paperkite Studio (crowded "Paper Kite(s)" paper/stationery brands, Etsy shops and a band). All need a manual USPTO check.
+- **mcpmarket skill:** page unreachable from this session; not installed. Do not install any third-party skill without reviewing its SKILL.md and scripts.
