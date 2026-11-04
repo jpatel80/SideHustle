@@ -1,0 +1,8 @@
+# Bake-off subjects: deliberately varied difficulty so weak models show up.
+# One page idea per line. Lines starting with # are ignored.
+A happy fox sitting in a meadow with flowers
+A smiling dinosaur holding a balloon
+A cozy treehouse with a ladder and a friendly owl
+A race car with big wheels on a winding road
+A mermaid and a seahorse with shells and bubbles
+A garden scene with a butterfly, a snail and three big sunflowers
