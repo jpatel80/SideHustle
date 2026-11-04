@@ -168,3 +168,13 @@ Your Claude subscription is the main ongoing cost and is not counted above.
 - Shopify MCP: <https://github.com/geli2001/shopify-mcp>
 - Google Trends MCP: <https://glama.ai/mcp/servers/jain-eshan/google-trends-mcp>
 - Image-gen MCP: <https://lobehub.com/mcp/merlinrabens-image-gen-mcp>
+
+---
+
+## 8. Decisions log (2026-11-04)
+
+- **GitHub access:** fixed; branch `claude/serene-maxwell-swxha4` is pushed.
+- **Image generator (recommended, pending your account):** OpenAI API (`gpt-image-2`), $20 prepaid, auto-recharge off, monthly limit set. Alternative for lettering-heavy art (covers, tees): Ideogram API. Run a ~$1 bake-off on 20 prompts before the pilot. **[verify]** current pricing, commercial-use terms, and whether the account needs identity verification.
+- **Pen name:** KDP account and tax info use the legal name; the pen name goes in each book's Author field. Choose it before the first publish, since changing it later is reportedly restricted **[verify]**. Name shortlist is in the chat thread; clear any final pick on Amazon, Etsy, USPTO and domains before publishing.
+- **Network:** this cloud session cannot reach `kdp.amazon.com`, so Claude cannot pre-fill KDP forms from here. Plan for you to do the upload (about 10-15 min/book from files Claude prepares), or later run Claude Code locally with Playwright.
+- **Secrets:** API keys go in the environment's settings as an environment variable (e.g. `OPENAI_API_KEY`), never in chat or the repo.
