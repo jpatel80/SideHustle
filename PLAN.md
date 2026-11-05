@@ -199,3 +199,23 @@ Your Claude subscription is the main ongoing cost and is not counted above.
 
 - I drove headless Chromium against tmsearch.uspto.gov from the cloud container (no desktop browser is attached to this session).
 - **Ranking changed.** Moth & Marigold is now the cleanest (only dead MARIGOLD AND MOTH marks). Paperkite Studio is medium risk (live PAPER KITE marks in media/photography). Little Fox Paper Co dropped to last: live LITTLE FOX registrations in kids-adjacent classes (9/41, 24, 14) and an established kids English-learning brand of that name.
+
+### Decision 2026-11-05: pen name / brand = **Little Fox Paper Co**
+
+- Chosen by the owner after being shown the USPTO findings and the risk. Domains littlefoxpaper.com and littlefoxpaper.co reported available by the owner (not independently verified by me).
+- **What the USPTO check showed:** no mark containing LITTLE FOX PAPER (nothing identical). The risk is the LITTLE FOX element: live registrations in classes 9/41, 24, 14, 32 and an established children's English-learning company called Little Fox. Clothing (class 25), games (28) and books (16) LITTLE FOX filings found were all dead.
+- **Mitigations we adopt:**
+  - Always use the full name "Little Fox Paper Co", never "Little Fox" alone, in titles, listings, store names and handles.
+  - Avoid fox-only branding that imitates the Little Fox learning brand: no animated-story or English-learning/educational positioning, no songs/audio, no app-style content.
+  - Do not file a trademark on the name until we have traction; revisit with an attorney before scaling merchandise (tees, class 25) or if any takedown or cease-and-desist arrives.
+  - If a conflict ever appears, the fallback names are Moth & Marigold and Paperkite Studio. Keep books free of the brand name inside the artwork so a rename is cheap (author name is in the KDP Author field, copyright page and cover only).
+- **Do now (owner):** register both domains, claim handles (Instagram, Pinterest, TikTok, Etsy shop name), and use `Little Fox Paper Co` as the KDP Author name for every book. Choose it before the first publish; changing the author name later is reportedly restricted.
+
+### Update 2026-11-05: author-name rules and pen-name shortlist
+
+- **Correction to earlier advice:** I said KDP seemed to accept a brand-style Author field. Evidence conflicts (a KDP community answer says brand/domain names are not allowed as author names, others point to brand-style bylines that exist; coloring books are reported to get blocked for author-name and title violations). Official KDP text could not be read from this environment. Treat a brand in the Author field as risky: the author name cannot be changed after publishing (per KDP help as quoted by guides).
+- **Plan:** Author field = a human-sounding pen name. "Little Fox Paper Co" appears as the imprint on the cover, title page and copyright page, and as the domain, social handles and Etsy/tee storefront. A visible Publisher name reportedly needs your own ISBN (cost); with KDP's free ISBN the book shows "Independently published". Verify.
+- **Free authoritative check:** ask KDP Support "Can I use a brand name as the author name?" before the first publish.
+- **Pen-name shortlist (no existing author found by web search; verify on Amazon):** Wren Ashby, Hazel Larkin, Rowan Whitlow, Nora Brindle, Fern Calloway, Willa Fennimore, Maisie Thornwood, Odette Finch, Clover Hastings, Finley Penrose, Elsie Pemberton. Dropped: Juniper Hale (existing children's author). Top picks: Wren Ashby, Hazel Larkin.
+- **Bio rule:** keep it honest; no invented credentials, no AI headshot presented as a real person.
+- **Open:** one pen name or two (kids vs adult); owner to search the chosen name in Amazon Books/Kindle; dedicated exact-match USPTO search and domain lookup still to run.
