@@ -16,3 +16,10 @@ Not checked: single-word marks (MOTH, MARIGOLD) on their own, design marks witho
 and anything outside the US. Before committing money to a name: search Amazon (books + authors),
 Etsy shop names, the .com domain and social handles, and consider a short attorney consult
 before scaling to merchandise.
+
+## Follow-up checks for "Little Fox Paper Co" (run after the naming decision)
+
+- USPTO single-token search `littlefoxpaper`: **"No results found."**
+- USPTO "fox paper" (9,722 results, top 404 scanned, filtered to marks containing fox paper): only COCKLE & FOX PAPER CONSERVATION AND BOOK WORKS, class 37 (conservation services), dead/cancelled. Nothing containing LITTLE FOX PAPER.
+- Domains (RDAP lookup + DNS, 2026-11-05): littlefoxpaper.com and littlefoxpaper.co both returned 404 / no A record, i.e. not registered at that moment. Registration is first-come: buy them soon. (A 404 from RDAP is strong but not a guarantee; the registrar's checkout page is the final word.)
+- Still not checked: Amazon author/book search for the pen name, Etsy shop name, social handles.

@@ -218,4 +218,4 @@ Your Claude subscription is the main ongoing cost and is not counted above.
 - **Free authoritative check:** ask KDP Support "Can I use a brand name as the author name?" before the first publish.
 - **Pen-name shortlist (no existing author found by web search; verify on Amazon):** Wren Ashby, Hazel Larkin, Rowan Whitlow, Nora Brindle, Fern Calloway, Willa Fennimore, Maisie Thornwood, Odette Finch, Clover Hastings, Finley Penrose, Elsie Pemberton. Dropped: Juniper Hale (existing children's author). Top picks: Wren Ashby, Hazel Larkin.
 - **Bio rule:** keep it honest; no invented credentials, no AI headshot presented as a real person.
-- **Open:** one pen name or two (kids vs adult); owner to search the chosen name in Amazon Books/Kindle; dedicated exact-match USPTO search and domain lookup still to run.
+- **Open:** one pen name or two (kids vs adult); owner to search the chosen name in Amazon Books/Kindle; exact-match USPTO check and domain lookup DONE (see research/name_clearance_2026-11-05.md): no LITTLE FOX PAPER mark, littlefoxpaper.com and .co unregistered.
