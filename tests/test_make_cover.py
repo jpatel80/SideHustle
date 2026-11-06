@@ -132,6 +132,7 @@ class CoverTests(unittest.TestCase):
 
     def test_title_lines(self):
         self.assertEqual(mc.title_lines("Cozy Winter Animals Coloring Book"), ["Cozy Winter", "Animals", "Coloring Book"])
+        self.assertEqual(mc.title_lines("Cozy Cottage Coloring Book for Adults"), ["Cozy Cottage", "Coloring Book", "for Adults"])
         self.assertEqual(mc.title_lines("Garden Friends"), ["Garden", "Friends"])
         self.assertEqual(mc.title_lines("Mandalas"), ["Mandalas"])
 
@@ -217,10 +218,19 @@ class CoverTests(unittest.TestCase):
             self.assertEqual(sum(1 for p in strip.getdata() if sum(p) < 300), 0, theme)
         self.assertEqual(len(tops), len(fun.THEMES))  # the themes really differ
 
-    def test_spine_text_style_fun_with_enough_pages(self):
+    def test_spine_too_thin_for_readable_text_stays_blank(self):
         out = self.build(84, name="p84.pdf", extra=("--theme", "garden"))
         g = mc.cover_geometry(84, (8.5, 11.0))
-        self.assertTrue(g["spine_text"])
+        self.assertTrue(g["spine_text"])  # KDP would print it ...
+        self.assertFalse(g["spine_text_readable"])  # ... but it would be about 4 pt, so we leave the spine blank
+        im = Image.open(out.with_suffix(".png")).convert("RGB")
+        strip = im.crop((round(g["spine_x0"] * 300), 0, round(g["spine_x1"] * 300), im.height))
+        self.assertEqual(sum(1 for p in strip.getdata() if sum(p) < 300), 0)
+
+    def test_spine_text_style_fun_with_enough_pages(self):
+        out = self.build(130, name="p130.pdf", extra=("--theme", "garden"))
+        g = mc.cover_geometry(130, (8.5, 11.0))
+        self.assertTrue(g["spine_text_readable"])
         im = Image.open(out.with_suffix(".png")).convert("RGB")
         strip = im.crop((round(g["spine_x0"] * 300), 0, round(g["spine_x1"] * 300), im.height))
         self.assertGreater(sum(1 for p in strip.getdata() if p[0] < 90 and p[2] < 140), 500)

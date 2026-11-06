@@ -2,7 +2,7 @@
 """Archive a finished book into books/NNN-slug/final/ so it can be committed to git and found later.
 
 Copies interior.pdf, cover.pdf and the cover preview, stores the page images as optimized PNGs
-(grayscale when R, G and B differ by at most 16 levels, i.e. line art with faint model noise; color pages stay RGB), copies the cost ledger,
+(grayscale when R, G and B differ by at most 48 levels, i.e. line art with faint model noise; color pages stay RGB), copies the cost ledger,
 and writes final/MANIFEST.md with page counts, file sizes, SHA-256 checksums and total spend.
 
 Usage:
@@ -22,7 +22,7 @@ from pathlib import Path
 from PIL import Image, ImageChops
 
 PAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp"}
-NEAR_GRAY = 16  # max R/G/B difference still treated as gray (image models leave faint chroma noise on line art)
+NEAR_GRAY = 48  # max R/G/B difference still treated as gray (image models leave faint chroma noise on line art; real color is far above this)
 
 
 def sha256(path: Path) -> str:

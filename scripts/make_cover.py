@@ -47,6 +47,7 @@ SAFE = 0.4  # inches kept clear of the trim edge for text (KDP minimum is 0.25)
 BARCODE_W, BARCODE_H = 2.0, 1.2  # KDP suggested barcode size, inches
 BARCODE_MARGIN = 0.4  # from trim and from spine (KDP minimum 0.25)
 SPINE_SAFE = 0.0625  # KDP: keep 1/16 in clear of the spine edges
+MIN_SPINE_TEXT_IN = 0.09  # smallest text height worth printing on the spine (about 6.5 pt)
 
 BG = (206, 232, 245)  # pale winter blue
 INK = (24, 52, 92)  # navy for text
@@ -73,6 +74,8 @@ def cover_geometry(pages: int, trim: tuple[float, float], paper: str = "white") 
         "front_x0": bw + tw + spine, "front_x1": bw + tw + spine + tw,
         "top": bh, "bottom": bh + th,
         "spine_text": pages >= bi.SPINE_TEXT_MIN_PAGES,
+        # KDP wants 1/16 in clear on each side of the spine text; below this height the type would be under ~7 pt
+        "spine_text_readable": pages >= bi.SPINE_TEXT_MIN_PAGES and spine - 2 * SPINE_SAFE >= MIN_SPINE_TEXT_IN,
     }
 
 
@@ -294,14 +297,20 @@ def snow_dots(img: Image.Image, g: dict, seed: int = 7) -> None:
 
 
 def title_lines(title: str) -> list[str]:
-    """Split a title into short display lines; a trailing 'Coloring Book' gets its own line."""
+    """Split a title into short display lines; 'Coloring Book' always stays together on its own line."""
     words = title.split()
-    tail = []
-    if len(words) > 2 and " ".join(words[-2:]).lower() == "coloring book":
-        words, tail = words[:-2], [" ".join(title.split()[-2:])]
-    n = 2 if len(words) >= 3 else len(words)
-    per = -(-len(words) // max(n, 1)) if words else 1
-    return [" ".join(words[i:i + per]) for i in range(0, len(words), per)] + tail
+
+    def balance(ws: list[str], keep_short: bool = False) -> list[str]:
+        if not ws:
+            return []
+        n = 2 if len(ws) >= 3 else 1 if keep_short else len(ws)
+        per = -(-len(ws) // n)
+        return [" ".join(ws[i:i + per]) for i in range(0, len(ws), per)]
+
+    for i in range(len(words) - 1):
+        if (words[i].lower(), words[i + 1].lower()) == ("coloring", "book") and len(words) > 2:
+            return balance(words[:i], True) + [" ".join(words[i:i + 2])] + balance(words[i + 2:], True)
+    return balance(words)
 
 
 def draw_front(img, g, a, title_font_path, body_font_path, art_path) -> None:  # noqa: C901
@@ -376,7 +385,7 @@ def draw_back(img, g, a, title_font_path, body_font_path) -> None:
 
 
 def draw_spine(img, g, a, title_font_path, body_font_path) -> None:
-    if not g["spine_text"]:
+    if not g["spine_text_readable"]:
         return
     x0, x1 = px(g["spine_x0"]), px(g["spine_x1"])
     top, bottom = px(g["top"]), px(g["bottom"])
@@ -650,7 +659,8 @@ def main(argv=None) -> int:
     draw_guides(img, g).save(out.with_name(out.stem + "_guides.png"), dpi=(DPI, DPI))
     print(
         f"cover: {g['total_w']:.4f} x {g['total_h']:.4f} in ({img.width} x {img.height} px), "
-        f"spine {g['spine']:.4f} in, spine text: {'yes' if g['spine_text'] else 'no (under the KDP page minimum)'}"
+        f"spine {g['spine']:.4f} in, spine text: "
+        + ("yes" if g["spine_text_readable"] else "no (spine too thin to print readable text)" if g["spine_text"] else "no (under the KDP page minimum)")
     )
     print(f"wrote {out}, {out.with_suffix('.png')}, {out.with_name(out.stem + '_guides.png')}")
     print("Check the PDF in KDP's cover previewer / cover calculator before publishing.")
