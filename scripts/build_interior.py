@@ -38,15 +38,15 @@ DPI = 300
 PT = 72.0
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp"}
 
-# VERIFY against KDP: minimum inside (gutter) margin in inches by final page count.
+# Verified 2026-11-06 against KDP help "Set Trim Size, Bleed, and Margins" (GVBQ3CMEQW3W2VL6): minimum inside (gutter) margin by page count.
 GUTTER_TABLE = [(150, 0.375), (300, 0.5), (500, 0.625), (700, 0.75), (828, 0.875)]
-MIN_PAGES = 24  # VERIFY: smallest paperback page count KDP accepts.
-MAX_PAGES = 828  # VERIFY: largest page count for the gutter table above.
+MIN_PAGES = 24  # Verified 2026-11-06 (KDP Paperback Submission Guidelines): smallest paperback page count.
+MAX_PAGES = 828  # Largest page count in the gutter table. Real limit depends on trim/ink/paper: 8.5x11 black ink on white paper is 24-590 (KDP, 2026-11-06).
 BLEED_W = 0.125  # extra width for a full-bleed PDF (outer edge only)
 BLEED_H = 0.25  # extra height for a full-bleed PDF (top + bottom)
-# VERIFY: spine thickness per page, inches.
+# Verified 2026-11-06 (KDP "Create a Paperback Cover", G201953020): spine thickness per page, inches.
 SPINE_PER_PAGE = {"white": 0.002252, "cream": 0.0025, "premium-color": 0.002347}
-SPINE_TEXT_MIN_PAGES = 79  # VERIFY: spine text is only allowed from this page count.
+SPINE_TEXT_MIN_PAGES = 80  # KDP: spine text only on books with MORE than 79 pages (Cover Creator says 80). Verified 2026-11-06.
 
 FONT_CANDIDATES = [
     "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
@@ -287,12 +287,16 @@ def draw_text_page(c, kind, a, fonts, page_w, page_h, safe):
         if a.subtitle:
             y = draw_centered_text(c, a.subtitle, body, 20, y - 10, page_w, cx_w)
         draw_centered_text(c, f"by {a.author}", body, 18, page_h * 0.18, page_w, cx_w)
+        if a.imprint:
+            draw_centered_text(c, a.imprint, body, 14, page_h * 0.12, page_w, cx_w)
     elif kind == "copyright":
         lines = [
             f"Copyright \u00a9 {a.year} {a.author}. All rights reserved.",
             "No part of this book may be reproduced in any form without written permission "
             "from the author, except for personal use of the pages for coloring.",
         ]
+        if a.imprint:
+            lines.append(a.imprint)
         if a.note:
             lines.append(a.note)
         y = top - 40
@@ -454,7 +458,7 @@ def cmd_cover_dims(args) -> int:
         "bleed_in_each_side": BLEED_W,
         "spine_text_allowed": args.pages >= SPINE_TEXT_MIN_PAGES,
         "barcode_keepout": "leave a blank ~2.0 x 1.2 in area at the bottom-right of the back cover "
-        "(KDP places the barcode there; VERIFY size)",
+        "(KDP suggests 2 x 1.2 in, min 1.4 x 0.8, at least 0.25 in from spine and trim; verified 2026-11-06; if you leave it blank KDP adds the barcode itself)",
     }
     print(json.dumps(out, indent=2))
     print("\nVERIFY against KDP's cover calculator before making the final cover.")
@@ -480,6 +484,7 @@ def make_parser() -> argparse.ArgumentParser:
     b.add_argument("--author", required=True, help="the pen name shown on the book")
     b.add_argument("--year", default="2026")
     b.add_argument("--note", default="", help="extra line on the copyright page")
+    b.add_argument("--imprint", default="", help="imprint / brand line on the title and copyright pages")
     b.add_argument("--trim", type=parse_trim, default=(8.5, 11.0), help="trim size WxH inches (default 8.5x11)")
     b.add_argument("--bleed", action="store_true", help="make a full-bleed PDF (art stays inside margins)")
     b.add_argument("--outer", type=float, default=0.375, help="outer margin, inches (KDP min 0.25)")

@@ -97,6 +97,17 @@ class BuildInteriorTests(unittest.TestCase):
         self.assertAlmostEqual(float(r.pages[0].mediabox.width), (8.5 + 0.125) * 72, places=1)
         self.assertAlmostEqual(float(r.pages[0].mediabox.height), (11 + 0.25) * 72, places=1)
 
+    def test_imprint_on_title_and_copyright_pages(self):
+        self.make(10)
+        out = self.dir / "int.pdf"
+        code, _, err = run(["build", str(self.imgs), "-o", str(out), "--title", "T", "--author", "A B",
+                            "--imprint", "Little Fox Paper Co", "--note", "Made with AI tools."])
+        self.assertEqual(code, 0, err)
+        r = PdfReader(str(out))
+        self.assertIn("Little Fox Paper Co", r.pages[0].extract_text())
+        self.assertIn("Little Fox Paper Co", r.pages[1].extract_text())
+        self.assertIn("Made with AI tools.", r.pages[1].extract_text())
+
     def test_too_few_pages_is_refused(self):
         self.make(3)  # 4 + 6 = 10 pages
         code, out, so, se = self.build()
