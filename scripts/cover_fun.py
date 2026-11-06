@@ -23,6 +23,13 @@ FUN_COLORS = [
 GRADIENT_STOPS = [(0.0, (64, 196, 224)), (0.55, (118, 172, 243)), (1.0, (198, 140, 232))]
 
 
+THEMES = {
+    "winter": {"stops": GRADIENT_STOPS, "decor": "snow"},
+    "ocean": {"stops": [(0.0, (96, 226, 232)), (0.55, (56, 160, 236)), (1.0, (104, 108, 224))], "decor": "bubbles"},
+    "garden": {"stops": [(0.0, (255, 222, 112)), (0.5, (162, 220, 140)), (1.0, (72, 182, 164))], "decor": "flowers"},
+}
+
+
 def gradient(size: tuple[int, int], stops=GRADIENT_STOPS) -> Image.Image:
     """Vertical multi-stop gradient."""
     import numpy as np
@@ -79,6 +86,50 @@ def snowflakes(img: Image.Image, rnd: random.Random, n: int, avoid=(), sizes=(40
                 snowflake(d, x, y, r, (255, 255, 255, rnd.choice([150, 190, 230])), max(3, int(r / 14)))
                 break
     img.paste(ov, (0, 0), ov)
+
+
+def bubbles(img: Image.Image, rnd: random.Random, n: int, avoid=(), sizes=(30, 110)) -> None:
+    """Translucent outlined bubbles with a small highlight."""
+    ov = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(ov)
+    W, H = img.size
+    for _ in range(n):
+        for _try in range(10):
+            r = rnd.uniform(*sizes)
+            x, y = rnd.uniform(0, W), rnd.uniform(0, H)
+            if _hits(x, y, r, avoid):
+                continue
+            a = rnd.choice([120, 160, 200])
+            d.ellipse([x - r, y - r, x + r, y + r], fill=(255, 255, 255, 38), outline=(255, 255, 255, a), width=max(4, int(r / 12)))
+            d.arc([x - r * 0.62, y - r * 0.62, x + r * 0.62, y + r * 0.62], 200, 260, fill=(255, 255, 255, 235), width=max(4, int(r / 10)))
+            break
+    img.paste(ov, (0, 0), ov)
+
+
+def flowers(img: Image.Image, rnd: random.Random, n: int, avoid=(), sizes=(34, 100)) -> None:
+    """Simple five-petal flowers in white and pastel pink / cream."""
+    ov = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(ov)
+    W, H = img.size
+    for _ in range(n):
+        for _try in range(10):
+            r = rnd.uniform(*sizes)
+            x, y = rnd.uniform(0, W), rnd.uniform(0, H)
+            if _hits(x, y, r * 1.2, avoid):
+                continue
+            col = rnd.choice([(255, 255, 255), (255, 214, 232), (255, 244, 200)]) + (rnd.choice([190, 225, 245]),)
+            rot = rnd.uniform(0, math.pi)
+            for k in range(5):
+                a = rot + k * 2 * math.pi / 5
+                px_, py_ = x + r * 0.55 * math.cos(a), y + r * 0.55 * math.sin(a)
+                d.ellipse([px_ - r * 0.42, py_ - r * 0.42, px_ + r * 0.42, py_ + r * 0.42], fill=col)
+            d.ellipse([x - r * 0.24, y - r * 0.24, x + r * 0.24, y + r * 0.24], fill=(255, 196, 60, 255))
+            break
+    img.paste(ov, (0, 0), ov)
+
+
+def decor(img: Image.Image, kind: str, rnd: random.Random, n: int, avoid=()) -> None:
+    {"snow": snowflakes, "bubbles": bubbles, "flowers": flowers}[kind](img, rnd, n, avoid)
 
 
 def confetti(img: Image.Image, rnd: random.Random, n: int, avoid=()) -> None:

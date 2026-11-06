@@ -547,7 +547,8 @@ def draw_back_fun(img, g, a, fpath, body_font_path) -> None:
 
 def compose_fun(a, g: dict) -> Image.Image:
     W, H = px(g["total_w"]), px(g["total_h"])
-    img = fun.gradient((W, H))
+    theme = fun.THEMES[a.theme]
+    img = fun.gradient((W, H), theme["stops"])
     rnd = random.Random(a.seed)
     cy = (px(g["top"]) + px(g["bottom"])) // 2
     fun.sunburst(img, ((px(g["front_x0"]) + px(g["front_x1"])) / 2, cy), alpha=26)
@@ -557,7 +558,7 @@ def compose_fun(a, g: dict) -> Image.Image:
     avoid = [(px(g["spine_x0"] - 0.12), 0, px(g["spine_x1"] + 0.12), H),
              (fcx - px(1.7), px(g["bottom"]) - px(0.95), fcx + px(1.7), px(g["bottom"]) - px(0.2)),
              (px(bb[0] - 0.2), px(bb[1] - 0.2), px(bb[2] + 0.2), px(bb[3] + 0.2))]
-    fun.snowflakes(img, rnd, 55, avoid)
+    fun.decor(img, theme["decor"], rnd, 55, avoid)
     fun.confetti(img, rnd, 90, avoid)
     fpath = fun_font_path(a, find_font(a.bold_font))
     body = find_body_font(a.font, find_font(a.bold_font))
@@ -617,6 +618,8 @@ def make_parser() -> argparse.ArgumentParser:
     p.add_argument("--blurb", default="", help="back-cover lines separated by '|'")
     p.add_argument("--style", choices=["fun", "plain"], default="fun",
                    help="fun: gradient, snowflakes, confetti, bouncy rainbow title, stickers; plain: the simple blue cover")
+    p.add_argument("--theme", choices=sorted(fun.THEMES), default="winter",
+                   help="fun style colors and decorations: winter (snowflakes), ocean (bubbles), garden (flowers)")
     p.add_argument("--badge", default="", help="starburst text for the fun style, lines separated by '|' (e.g. '30|PICTURES|TO COLOR')")
     p.add_argument("--stickers", nargs="+", default=[], metavar="IMG",
                    help="book page images shown as fully colored round stickers (first 3 on the front, next 2 on the back)")

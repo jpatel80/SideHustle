@@ -204,6 +204,27 @@ class CoverTests(unittest.TestCase):
         strip = im.crop((round(g["spine_x0"] * 300), 0, round(g["spine_x1"] * 300), im.height))
         self.assertEqual(sum(1 for p in strip.getdata() if sum(p) < 300), 0)
 
+    def test_every_theme_builds_with_blank_barcode_and_spine(self):
+        g = mc.cover_geometry(64, (8.5, 11.0))
+        tops = set()
+        for theme in sorted(fun.THEMES):
+            out = self.build(64, name=f"{theme}.pdf", extra=("--theme", theme))
+            im = Image.open(out.with_suffix(".png")).convert("RGB")
+            tops.add(im.getpixel((20, 20)))
+            x0, y0, x1, y1 = (round(v * 300) for v in mc.barcode_box(g))
+            self.assertEqual(im.crop((x0, y0, x1, y1)).getextrema(), ((255, 255), (255, 255), (255, 255)))
+            strip = im.crop((round(g["spine_x0"] * 300), 0, round(g["spine_x1"] * 300), im.height))
+            self.assertEqual(sum(1 for p in strip.getdata() if sum(p) < 300), 0, theme)
+        self.assertEqual(len(tops), len(fun.THEMES))  # the themes really differ
+
+    def test_spine_text_style_fun_with_enough_pages(self):
+        out = self.build(84, name="p84.pdf", extra=("--theme", "garden"))
+        g = mc.cover_geometry(84, (8.5, 11.0))
+        self.assertTrue(g["spine_text"])
+        im = Image.open(out.with_suffix(".png")).convert("RGB")
+        strip = im.crop((round(g["spine_x0"] * 300), 0, round(g["spine_x1"] * 300), im.height))
+        self.assertGreater(sum(1 for p in strip.getdata() if p[0] < 90 and p[2] < 140), 500)
+
     def test_missing_sticker_is_an_error(self):
         code, _, err = run([str(self.art), "-o", str(self.dir / "c.pdf"), "--title", "T", "--author", "A", "--pages", "64",
                             "--stickers", str(self.dir / "missing.png")])
