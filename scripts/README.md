@@ -68,5 +68,7 @@ python3 scripts/make_cover.py books/<slug>/pages/01_*.png -o books/<slug>/cover.
   --pages 64 --blurb "line one|line two"
 ```
 
+`--colored-half` fills the enclosed regions of the front art with crayon colors on one side of a scribbled edge and draws a crayon at the edge ("someone is coloring it"); the lines are untouched and `--seed` changes the color choices. Needs scipy.
+
 Interior flag added: `build_interior.py build ... --imprint "Little Fox Paper Co"` prints the imprint
 on the title and copyright pages.

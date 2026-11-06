@@ -5,6 +5,7 @@ Status: **FINAL DRAFT for owner review** (pages, interior, cover and page count 
 ## Files to upload (local, not in git)
 - Interior: `books/001-cozy-winter-animals/interior.pdf`: 64 pages, 8.5 x 11 in, no bleed, fonts embedded, 2.7 MB
 - Cover: `books/001-cozy-winter-animals/cover.pdf`: 17.3941 x 11.25 in (back + 0.1441 in spine + front, 0.125 in bleed), 5218 x 3375 px at 300 DPI. Previews: `cover.png`, `cover_guides.png` (guides show trim, spine and safe lines)
+- The front shows the owl page half colored in, as an example of coloring; the interior is black and white only, and the back cover and the description both say so. Command used: `make_cover.py ... --colored-half` (drop the flag for an all-line-art cover).
 - Verify the cover in KDP's cover previewer; if KDP reports a different spine width, tell Claude and the cover is regenerated in seconds.
 
 ## Step 1: Paperback details
@@ -27,9 +28,10 @@ Snuggle up with 30 cozy winter animals ready to be colored! Each page has one bi
 &bull; A "This book belongs to" page<br>
 &bull; Large 8.5 x 11 inch pages<br><br>
 Great for crayons, colored pencils and washable markers. A fun quiet-time activity and an easy gift for kids who love animals and snowy days.<br><br>
+The inside pages are printed in black and white, ready for you to color. The colors on the cover are just an example.<br><br>
 The illustrations in this book were created with AI image tools and were selected and arranged by the publisher, Little Fox Paper Co.
 ```
-(about 1,000 characters; KDP's limit is 4,000 **[verify]**)
+(about 1,100 characters; KDP's limit is 4,000 **[verify]**)
 
 - **Publishing rights:** "I own the copyright and I hold necessary publishing rights." See owner decision 2 below before ticking this.
 - **Primary audience, sexually explicit content:** No

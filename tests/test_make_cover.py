@@ -23,6 +23,16 @@ def art(path: Path):
     im.save(path)
 
 
+def boxes(path: Path):
+    """Three side-by-side closed boxes on white, thick black lines (adjacent regions across a line)."""
+    im = Image.new("L", (900, 600), 255)
+    d = ImageDraw.Draw(im)
+    for i in range(3):
+        d.rectangle([60 + i * 260, 100, 60 + (i + 1) * 260, 500], outline=0, width=12)
+    d.ellipse([140, 240, 170, 270], fill=255, outline=0, width=0)  # tiny highlight-sized region stays uncolored
+    im.save(path)
+
+
 def run(argv):
     out, err = io.StringIO(), io.StringIO()
     with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
@@ -123,6 +133,51 @@ class CoverTests(unittest.TestCase):
         self.assertEqual(mc.title_lines("Cozy Winter Animals Coloring Book"), ["Cozy Winter", "Animals", "Coloring Book"])
         self.assertEqual(mc.title_lines("Garden Friends"), ["Garden", "Friends"])
         self.assertEqual(mc.title_lines("Mandalas"), ["Mandalas"])
+
+    def test_colorize_fills_regions_and_keeps_lines(self):
+        src = self.dir / "boxes.png"
+        boxes(src)
+        img, tip, crayon = mc.colorize_half(Image.open(src), seed=1, split=2.0, tilt=0.0, jitter=False)
+        px_ = img.load()
+        for cx in (190, 450, 710):  # box centers are filled with a saturated color
+            r, g, b = px_[cx, 300]
+            self.assertGreater(max(r, g, b) - min(r, g, b), 40)
+        self.assertEqual(px_[5, 5], (255, 255, 255))  # outside background stays white
+        self.assertLess(sum(px_[66, 300]), 100)  # the black line is still black
+        self.assertEqual(len(tip), 2)
+        self.assertEqual(len(crayon), 3)
+
+    def test_colorize_neighbouring_regions_get_different_colors(self):
+        src = self.dir / "boxes.png"
+        boxes(src)
+        img, _, _ = mc.colorize_half(Image.open(src), seed=5, split=2.0, tilt=0.0, jitter=False)
+        colors = [img.getpixel((cx, 300))[:3] for cx in (190, 450, 710)]
+        self.assertNotEqual(colors[0], colors[1])
+        self.assertNotEqual(colors[1], colors[2])
+
+    def test_colorize_half_leaves_the_other_side_black_and_white(self):
+        src = self.dir / "boxes.png"
+        boxes(src)
+        img, _, _ = mc.colorize_half(Image.open(src), seed=2, split=0.5, tilt=0.0, jitter=False)
+        a = img.convert("RGB")
+        left_colored = any(max(p) - min(p) > 40 for p in a.crop((0, 0, 400, 600)).getdata())
+        right_colored = any(max(p) - min(p) > 8 for p in a.crop((520, 0, 900, 600)).getdata())
+        self.assertTrue(left_colored)
+        self.assertFalse(right_colored)
+
+    def test_colorize_is_deterministic_per_seed(self):
+        src = self.dir / "boxes.png"
+        boxes(src)
+        a, _, _ = mc.colorize_half(Image.open(src), seed=9)
+        b, _, _ = mc.colorize_half(Image.open(src), seed=9)
+        self.assertEqual(list(a.getdata())[::997], list(b.getdata())[::997])
+
+    def test_colored_half_cover_builds_and_keeps_barcode_white(self):
+        out = self.build(64, name="cc.pdf", extra=("--colored-half",))
+        g = mc.cover_geometry(64, (8.5, 11.0))
+        im = Image.open(out.with_suffix(".png")).convert("RGB")
+        x0, y0, x1, y1 = (round(v * 300) for v in mc.barcode_box(g))
+        self.assertEqual(im.crop((x0, y0, x1, y1)).getextrema(), ((255, 255), (255, 255), (255, 255)))
 
     def test_missing_art_is_an_error(self):
         code, _, err = run([str(self.dir / "nope.png"), "-o", str(self.dir / "c.pdf"), "--title", "T",

@@ -27,7 +27,8 @@ import random
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+import numpy as np
+from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 
@@ -127,7 +128,120 @@ def centered(draw, cx: int, y: int, text: str, font, fill) -> int:
     return y + a + d
 
 
-def line_art_panel(art_path: Path, size: tuple[int, int]) -> Image.Image:
+CRAYONS = [
+    (231, 76, 60), (243, 156, 18), (247, 202, 24), (46, 184, 114), (26, 188, 156), (52, 152, 219),
+    (155, 89, 182), (236, 112, 167), (140, 198, 63), (255, 138, 101), (100, 181, 246), (186, 104, 200),
+]
+
+
+def _boundary_x(h: int, w: int, split: float, tilt: float, rng, jitter: bool) -> np.ndarray:
+    """x position (px) of the edge of the colored area for every row: a tilted line with a
+    back-and-forth zigzag (like scribbled strokes) plus a little wobble."""
+    y = np.arange(h, dtype=np.float32)
+    bx = w * (split + tilt * (y / h - 0.5))
+    if jitter:
+        stroke = max(10.0, h / 90)
+        zig = (((y / stroke) % 2.0) - 1.0)  # triangle wave in [-1, 1]
+        bx = bx + np.abs(zig) * (w * 0.022) - w * 0.011
+        wob = np.convolve(rng.normal(0, 1, h), np.ones(25) / 25, mode="same")
+        bx = bx + wob * w * 0.03
+    return bx
+
+
+def colorize_half(gray: Image.Image, seed: int = 3, split: float = 0.5, tilt: float = 0.3,
+                  jitter: bool = True, min_area_frac: float = 0.0012):
+    """Fill the enclosed regions of black-line art with crayon colors on one side of a scribbled
+    edge (left/bottom), leaving the rest as plain line art. Returns (RGB image, (tip_x, tip_y) as
+    fractions of the image where a crayon should rest, the crayon's RGB color = the fill it is touching). Lines are untouched (colors are multiplied
+    under them), the outside background stays white, and tiny regions (eye highlights) stay white."""
+    from scipy import ndimage
+
+    rng = np.random.default_rng(seed)
+    arr = np.asarray(gray.convert("L"), dtype=np.float32)
+    h, w = arr.shape
+    ink = arr < 160
+    regions, n = ndimage.label(~ink)
+    if n == 0:
+        return gray.convert("RGB"), (0.5, 0.8), ACCENT
+    border = np.unique(np.concatenate([regions[0], regions[-1], regions[:, 0], regions[:, -1]]))
+    sizes = np.bincount(regions.ravel(), minlength=n + 1)
+    # every pixel (including line pixels) takes the label of its nearest region, so colors sit under the lines
+    idx = ndimage.distance_transform_edt(regions == 0, return_distances=False, return_indices=True)
+    full = regions[idx[0], idx[1]]
+    colorable = [lab for lab in range(1, n + 1) if lab not in border and sizes[lab] >= min_area_frac * h * w]
+    # neighbours (regions touching across a line) must not share a color
+    nb: dict[int, set] = {lab: set() for lab in colorable}
+    for a, b in ((full[:, :-1], full[:, 1:]), (full[:-1, :], full[1:, :])):
+        diff = a != b
+        for u, v in set(zip(a[diff].tolist(), b[diff].tolist())):
+            if u in nb and v in nb:
+                nb[u].add(v)
+                nb[v].add(u)
+    chosen: dict[int, tuple] = {}
+    for lab in sorted(colorable, key=lambda L: -sizes[L]):
+        used = {chosen[o] for o in nb[lab] if o in chosen}
+        free = [c for c in CRAYONS if c not in used] or CRAYONS
+        chosen[lab] = free[int(rng.integers(len(free)))]
+    lut = np.full((n + 1, 3), 255.0, dtype=np.float32)
+    for lab, c in chosen.items():
+        lut[lab] = c
+    color = lut[full]
+
+    # crayon-on-paper texture: grain plus diagonal hatching, blended toward white
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+    grain = ndimage.gaussian_filter(rng.normal(0, 1, (h, w)).astype(np.float32), 1.0)
+    grain /= max(float(np.abs(grain).max()), 1e-6)
+    period = max(6.0, w / 140)
+    hatch = 0.5 + 0.5 * np.sin((xx + yy) / period * 2 * np.pi + grain * 2.0)
+    amount = np.clip(0.80 + 0.12 * grain - 0.10 * hatch, 0.55, 0.95)[..., None]
+    color = 255.0 * (1 - amount) + color * amount
+
+    bx = _boundary_x(h, w, split, tilt, rng, jitter)
+    colored = xx < bx[:, None]
+    layer = np.where(colored[..., None], color, 255.0)
+    out = np.clip(layer * (arr[..., None] / 255.0), 0, 255).astype(np.uint8)
+    ty = 0.74
+    row = int(ty * h)
+    tx = float(bx[row]) / w
+    col = int(max(0, min(w - 1, bx[row] - 0.02 * w)))
+    crayon = tuple(int(v) for v in lut[full[row, col]])
+    if crayon == (255, 255, 255):
+        crayon = ACCENT
+    return Image.fromarray(out, "RGB"), (min(max(tx, 0.05), 0.95), ty), crayon
+
+
+def draw_crayon(panel: Image.Image, tip: tuple[float, float], color=ACCENT, scale: int = 3) -> None:
+    """Draw a crayon resting on the paper with its point at `tip` (pixels); body trails right/down."""
+    import math
+
+    ang = math.radians(28)
+    length, width = panel.width * 0.46, panel.width * 0.065
+    tx, ty = tip
+    S = scale
+    ov = Image.new("RGBA", (panel.width * S, panel.height * S), (0, 0, 0, 0))
+    d = ImageDraw.Draw(ov)
+    ux, uy = math.cos(ang), math.sin(ang)  # along the body, away from the tip
+    nx, ny = -uy, ux
+    tip_len = width * 1.4
+
+    def pt(along, across):
+        return ((tx + ux * along + nx * across) * S, (ty + uy * along + ny * across) * S)
+
+    dark = tuple(int(c * 0.65) for c in color)
+    d.polygon([pt(0, 0), pt(tip_len, -width / 2), pt(tip_len, width / 2)], fill=color, outline=dark)  # point
+    d.polygon([pt(tip_len, -width / 2), pt(length, -width / 2), pt(length, width / 2), pt(tip_len, width / 2)],
+              fill=color, outline=dark)  # body
+    wrap0, wrap1 = tip_len + width * 1.2, length - width * 0.8
+    d.polygon([pt(wrap0, -width / 2), pt(wrap1, -width / 2), pt(wrap1, width / 2), pt(wrap0, width / 2)],
+              fill=(250, 244, 230), outline=dark)  # paper wrapper
+    for k in (0.3, 0.7):  # two thin stripes on the wrapper
+        a = wrap0 + (wrap1 - wrap0) * k
+        d.line([pt(a, -width / 2), pt(a, width / 2)], fill=dark, width=max(2, S))
+    ov = ov.resize(panel.size, Image.LANCZOS)
+    panel.alpha_composite(ov) if panel.mode == "RGBA" else panel.paste(ov, (0, 0), ov)
+
+
+def line_art_panel(art_path: Path, size: tuple[int, int], colorize: bool = False, seed: int = 3) -> Image.Image:
     """White rounded panel containing the line art, fitted inside `size`."""
     pw, ph = size
     panel = Image.new("RGB", size, PANEL)
@@ -139,8 +253,16 @@ def line_art_panel(art_path: Path, size: tuple[int, int]) -> Image.Image:
         art = art.crop((max(0, box[0] - pad), max(0, box[1] - pad), min(art.width, box[2] + pad), min(art.height, box[3] + pad)))
     inner = (int(pw * 0.92), int(ph * 0.92))
     scale = min(inner[0] / art.width, inner[1] / art.height)
-    art = art.resize((max(1, round(art.width * scale)), max(1, round(art.height * scale))), Image.LANCZOS)
-    panel.paste(art.convert("RGB"), ((pw - art.width) // 2, (ph - art.height) // 2))
+    tip, crayon = None, ACCENT
+    rgb = art.convert("RGB")
+    if colorize:
+        rgb, tip, crayon = colorize_half(art, seed=seed)
+    art_w, art_h = max(1, round(art.width * scale)), max(1, round(art.height * scale))
+    rgb = rgb.resize((art_w, art_h), Image.LANCZOS)
+    ox, oy = (pw - art_w) // 2, (ph - art_h) // 2
+    panel.paste(rgb, (ox, oy))
+    if colorize and tip:
+        draw_crayon(panel, (ox + tip[0] * art_w, oy + tip[1] * art_h), color=crayon)
     mask = Image.new("L", size, 0)
     ImageDraw.Draw(mask).rounded_rectangle([0, 0, pw - 1, ph - 1], radius=px(0.3), fill=255)
     out = Image.new("RGBA", size, (0, 0, 0, 0))
@@ -170,7 +292,7 @@ def title_lines(title: str) -> list[str]:
     return [" ".join(words[i:i + per]) for i in range(0, len(words), per)] + tail
 
 
-def draw_front(img, g, a, title_font_path, body_font_path, art_path) -> None:
+def draw_front(img, g, a, title_font_path, body_font_path, art_path) -> None:  # noqa: C901
     d = ImageDraw.Draw(img)
     x0, x1 = px(g["front_x0"]), px(g["front_x1"])
     top, bottom = px(g["top"]), px(g["bottom"])
@@ -193,7 +315,7 @@ def draw_front(img, g, a, title_font_path, body_font_path, art_path) -> None:
     ph = art_bottom - art_top
     pw = min(safe_w, int(ph * 0.95))
     ph = min(ph, int(pw * 1.2))
-    panel = line_art_panel(art_path, (pw, ph))
+    panel = line_art_panel(art_path, (pw, ph), colorize=a.colored_half, seed=a.seed)
     img.paste(panel, (cx - pw // 2, art_top), panel)
 
     # subtitle banner
@@ -305,6 +427,9 @@ def make_parser() -> argparse.ArgumentParser:
     p.add_argument("--trim", type=bi.parse_trim, default=(8.5, 11.0))
     p.add_argument("--paper", choices=sorted(bi.SPINE_PER_PAGE), default="white")
     p.add_argument("--blurb", default="", help="back-cover lines separated by '|'")
+    p.add_argument("--colored-half", action="store_true",
+                   help="color in half of the front art (crayon look, with a crayon) and leave the rest line art")
+    p.add_argument("--seed", type=int, default=3, help="random seed for the crayon colors")
     p.add_argument("--font", help="body TrueType font")
     p.add_argument("--bold-font", help="bold TrueType font")
     return p
