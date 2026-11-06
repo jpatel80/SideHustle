@@ -1,7 +1,7 @@
 # TODO: Little Fox Paper Co setup tracker
 
 Brand / imprint: **Little Fox Paper Co** (never "Little Fox" alone). Author (pen name): **Wren Ashby** (backup: Hazel Larkin).
-Last updated: 2026-11-05. Tick boxes as you go; Claude updates the Claude sections.
+Last updated: 2026-11-06. Tick boxes as you go; Claude updates the Claude sections.
 
 ## A. You (human-only steps)
 
@@ -32,7 +32,7 @@ Do these in order. Section A1-A3 can be done any time before the new session; no
 - [ ] When A1-A3 are done, start a **new session** on this repo and paste the prompt in `NEW_SESSION_PROMPT.md`.
 
 ### A5. After the first draft is ready (the new session will tell you)
-- [ ] Review the generated pages and the interior PDF; reject any you don't like.
+- [ ] Review the generated pages, the interior PDF and the cover (`books/001-cozy-winter-animals/`); reject any you don't like.
 - [ ] Upload book 1 to KDP (about 10-15 min; Claude prepares every field in `books/001-cozy-winter-animals/listing.md`). Check the file in KDP's online previewer.
 - [ ] Select **Yes** for AI-generated images in the KDP form. Be honest in every field.
 - [ ] Optional: order one proof copy of the best book (a few dollars plus shipping).
@@ -54,13 +54,15 @@ Do these in order. Section A1-A3 can be done any time before the new session; no
 - [x] Project rules (`CLAUDE.md`), summary of agreements (`MEMORY.md`, also saved to the memory tool) and two project skills (`.claude/skills/`)
 - [x] Book 1 brief, 30 page ideas, draft listing (`books/001-cozy-winter-animals/`)
 
-### Needs the OpenRouter key (new session)
-- [ ] Model bake-off (5 models x 5 images, <= $3) and pick the winner by looking at the contact sheets
-- [ ] Generate book 1 (30 pages, <= $4), run QA, regenerate bad pages
-- [ ] Build `interior.pdf`, compute cover size for the final page count
-- [ ] Build `scripts/make_cover.py` (front art + title text + spine + back) and the cover for book 1
-- [ ] Final listing text; show you everything for review
-- [ ] Book 2 (adult) and book 3 (different kids niche) after you approve book 1
+### Book 1 pipeline (done 2026-11-06, waiting for owner review)
+- [x] Model bake-off (5 models x 5 images, $0.68 of the $3 cap). Winner **openai/gpt-image-2** (low quality, about $0.006/image), backup qwen/qwen-image-3. Krea needed `--aspect 4:5` (its provider rejects 3:4; script does not yet fall back per model)
+- [x] Generate book 1: 30 pages, every page viewed by eye, 3 rerolled/replaced. Spend $0.33 of the $4 cap
+- [x] `interior.pdf`: 64 pages, 8.5 x 11, no bleed, fonts embedded (`--imprint` added to the builder)
+- [x] KDP constants verified against KDP help pages (gutter, bleed, spine thickness, 24-page minimum, barcode). Correction: spine text needs 80+ pages (was 79)
+- [x] `scripts/make_cover.py` (+ 13 tests) and `cover.pdf` for book 1 (17.3941 x 11.25 in, spine 0.1441 in, blank spine, blank barcode area)
+- [x] Final `listing.md` (fields in KDP form order, AI disclosure, pricing with KDP's $2.84 print cost)
+- [ ] **Owner review of book 1** (see A5), then Claude starts books 2 (adult) and 3 (another kids niche)
+- [ ] Optional script fix: per-model aspect-ratio fallback in `generate_images.py` (Krea)
 
 ### Needs book 1 live and some sales data
 - [ ] Gate 2 review at ~day 90 (see PLAN.md)
@@ -72,7 +74,7 @@ Do these in order. Section A1-A3 can be done any time before the new session; no
 - **Gate T1 (~day 60 of tees):** 15 listings live, any sale at all?
 
 ## D. Spending caps
-OpenRouter credit $20 total. Bake-off <= $3. Book 1 <= $4. No ads, no paid tools, no domains beyond the two above until Gate 2.
+OpenRouter credit $20 total. Bake-off <= $3. Book 1 <= $4. **Spent so far: $1.01** (bake-off $0.68, book 1 $0.33; from the ledger files). No ads, no paid tools, no domains beyond the two above until Gate 2.
 
 ## E. Time-sensitive note
 Book 1 is winter-themed. Holiday gift demand is strongest in the weeks before late December, and KDP review takes days (reported up to ~72 hours for eBooks and longer for paperbacks; verify). The later it goes live, the more it relies on year-round "winter" demand. Not a reason to rush quality.

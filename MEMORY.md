@@ -20,14 +20,14 @@ A new session should read this first, then CLAUDE.md, TODO.md and PLAN.md. This 
 
 ## Tools and technical decisions
 - **Image generation: OpenRouter Image API** (`POST /api/v1/images`, base64 result, cost in `usage.cost`, failed generations not billed). Chosen over OpenAI direct for one key and swappable models. Live prices 2026-11-06: Qwen Image 3 $0.03, Krea 2 Medium $0.03, Recraft v4.1 $0.035, Seedream 5 Lite $0.035, FLUX 3 $0.041+, Recraft v4.1 vector (SVG) $0.08; GPT Image 2 and Gemini are per-token. Roughly $1-2 per 30-60 page book.
-- Repo scripts (all tested, 27 tests passing at last run): `scripts/generate_images.py` (models / generate / bakeoff, hard budget, resume, cost ledger, key never printed) and `scripts/build_interior.py` (qa / build / cover-dims). Not yet built: `scripts/make_cover.py`. No real paid generation has been run yet.
+- Repo scripts (all tested, 27 tests passing at last run): `scripts/generate_images.py` (models / generate / bakeoff, hard budget, resume, cost ledger, key never printed) and `scripts/build_interior.py` (qa / build / cover-dims). `scripts/make_cover.py` built 2026-11-06 (41 tests total). Book 1 generated and built; spend so far $1.01 of $20 (bake-off winner openai/gpt-image-2, backup qwen/qwen-image-3). Waiting for owner review of book 1 before books 2 and 3.
 - Project skills in `.claude/skills/`: `coloring-book-pipeline`, `kdp-listing-writer`. No existing KDP/coloring-book skills were found in the catalog.
 - The mcpmarket skill `kdp-publish` (queelius/claude-anvil) was reviewed and **not installed**: built for text manuscripts; depends on unread companion code (a Node cover-generation MCP needing an OpenAI key) and Playwright. Ideas borrowed only.
 - KDP has no upload API. **Owner uploads and publishes; Claude prepares files and listing text and never logs in or clicks Publish.** Dashboard automation is a possible later, local-only option.
 
 ## Compliance rules agreed
 - Disclose AI-generated art on KDP. No copyrighted characters, brands, celebrities, famous-author names or keyword stuffing. Honest bios (no invented credentials, no AI headshot as a real person). Mark unverified claims **[verify]**; most sources so far are secondary blogs.
-- KDP constants in `build_interior.py` marked VERIFY (gutter table, spine thickness, 24-page minimum, barcode area) must be checked before the first upload.
+- KDP constants in `build_interior.py` were verified against KDP help pages on 2026-11-06 (spine text needs 80+ pages); royalty tier, category paths and AI-disclosure wording are still [verify] in the KDP form.
 
 ## Environment notes (cloud session)
 - Sessions run in a cloud container; secrets go in the environment settings as environment variables and only reach **new** sessions. Needed: `OPENROUTER_API_KEY`; `openrouter.ai` in allowed domains (it was reachable).
