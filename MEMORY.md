@@ -38,3 +38,9 @@ A new session should read this first, then CLAUDE.md, TODO.md and PLAN.md. This 
 
 ## Open items (owner)
 See TODO.md section A: check Wren Ashby on Amazon, register domains, claim handles, KDP account + tax interview, optional KDP Support email, OpenRouter account with $20 and an API key in the environment, then start a new session with `NEW_SESSION_PROMPT.md`.
+
+## Update 2026-11-06 (end of session 2)
+- Book 1 (Cozy Winter Animals) built and **approved by the owner** (interior 64 pages, fun half-colored cover). Archived and committed under `books/001-cozy-winter-animals/final/`.
+- Owner preferences for all future books are in CLAUDE.md ("Owner preferences"): fun/energetic covers (half-colored art with a crayon, rainbow bouncy title, badge, ribbon, stickers), B&W-inside note on the cover, look at every page, archive and commit finished books, send files with SendUserFile (the owner cannot open container files).
+- New scripts: `make_cover.py` (+ `cover_fun.py`, Chewy font in `assets/fonts/`), `archive_book.py`. 57+ tests.
+- Books 2 (adult) and 3 (kids) were started after approval; see TODO.md for their status.
