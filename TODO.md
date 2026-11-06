@@ -1,7 +1,7 @@
 # TODO: Little Fox Paper Co setup tracker
 
 Brand / imprint: **Little Fox Paper Co** (never "Little Fox" alone). Author (pen name): **Wren Ashby** (backup: Hazel Larkin).
-Last updated: 2026-11-06. Tick boxes as you go; Claude updates the Claude sections.
+Last updated: 2026-11-06 (books 1-3 built). Tick boxes as you go; Claude updates the Claude sections.
 
 ## A. You (human-only steps)
 
@@ -54,15 +54,16 @@ Do these in order. Section A1-A3 can be done any time before the new session; no
 - [x] Project rules (`CLAUDE.md`), summary of agreements (`MEMORY.md`, also saved to the memory tool) and two project skills (`.claude/skills/`)
 - [x] Book 1 brief, 30 page ideas, draft listing (`books/001-cozy-winter-animals/`)
 
-### Book 1 pipeline (done 2026-11-06, waiting for owner review)
-- [x] Model bake-off (5 models x 5 images, $0.68 of the $3 cap). Winner **openai/gpt-image-2** (low quality, about $0.006/image), backup qwen/qwen-image-3. Krea needed `--aspect 4:5` (its provider rejects 3:4; script does not yet fall back per model)
-- [x] Generate book 1: 30 pages, every page viewed by eye, 3 rerolled/replaced. Spend $0.33 of the $4 cap
-- [x] `interior.pdf`: 64 pages, 8.5 x 11, no bleed, fonts embedded (`--imprint` added to the builder)
-- [x] KDP constants verified against KDP help pages (gutter, bleed, spine thickness, 24-page minimum, barcode). Correction: spine text needs 80+ pages (was 79)
-- [x] `scripts/make_cover.py` (+ 13 tests) and `cover.pdf` for book 1 (17.3941 x 11.25 in, spine 0.1441 in, blank spine, blank barcode area)
-- [x] Final `listing.md` (fields in KDP form order, AI disclosure, pricing with KDP's $2.84 print cost)
-- [ ] **Owner review of book 1** (see A5), then Claude starts books 2 (adult) and 3 (another kids niche)
+### Books 1-3 (built 2026-11-06; finished files are committed under `books/NNN-slug/final/`)
+- [x] **Book 1** Cozy Winter Animals (kids 4-8, 30 pictures, 64 pages): approved by the owner
+- [x] **Book 2** Cozy Cottage Coloring Book for Adults (40 pictures, 84 pages, garden-theme cover): built, **waiting for owner review**
+- [x] **Book 3** Happy Ocean Animals Coloring Book (kids 3-6, extra simple, 30 pictures, 64 pages, ocean-theme cover): built, **waiting for owner review**
+- [x] Model: `openai/gpt-image-2` at low quality for all three (adult also tested at medium and high: thinner lines, 8x and 33x the price)
+- [x] KDP constants verified (gutter, bleed, spine thickness, 24-page minimum, barcode); spine text needs 80+ pages **and** a spine wide enough for readable type (book 2's 0.19 in spine is left blank)
+- [x] Scripts: `make_cover.py` + `cover_fun.py` (fun covers, themes winter/ocean/garden), `archive_book.py`; 59 tests
+- [ ] **Owner review of books 2 and 3** (see A5): covers, contact sheets, listings; decide pen name for the adult book (default: same Wren Ashby)
 - [ ] Optional script fix: per-model aspect-ratio fallback in `generate_images.py` (Krea)
+- [ ] Stop and ask before any further books (Gate 1 needs the owner to publish and see the books through KDP review)
 
 ### Needs book 1 live and some sales data
 - [ ] Gate 2 review at ~day 90 (see PLAN.md)
@@ -74,7 +75,7 @@ Do these in order. Section A1-A3 can be done any time before the new session; no
 - **Gate T1 (~day 60 of tees):** 15 listings live, any sale at all?
 
 ## D. Spending caps
-OpenRouter credit $20 total. Bake-off <= $3. Book 1 <= $4. **Spent so far: $1.01** (bake-off $0.68, book 1 $0.33; from the ledger files). No ads, no paid tools, no domains beyond the two above until Gate 2.
+OpenRouter credit $20 total. Bake-off <= $3. Book 1 <= $4. **Spent so far: about $2.21 of $20** (ledger files): bake-off $0.68, quality tests for books 2 and 3 $0.77 (the $0.59 was a three-image test at high quality), book 1 $0.33, book 2 $0.24, book 3 $0.20. Caps per book ($4) were not approached. No ads, no paid tools, no domains beyond the two above until Gate 2.
 
 ## E. Time-sensitive note
 Book 1 is winter-themed. Holiday gift demand is strongest in the weeks before late December, and KDP review takes days (reported up to ~72 hours for eBooks and longer for paperbacks; verify). The later it goes live, the more it relies on year-round "winter" demand. Not a reason to rush quality.

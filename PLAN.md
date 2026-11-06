@@ -228,3 +228,13 @@ Your Claude subscription is the main ongoing cost and is not counted above.
 - **Economics reality check (my arithmetic):** at $7.99 and a 60% rate the royalty is about $1.95 per copy (the PLAN's earlier $2.32 example was for a 100-page book at another price). A $500/month target would need roughly 250 sales a month, which is why the stop gates stand.
 - **Copyright caveat:** purely AI-generated art may not be copyrightable in the US **[verify]**; noted in listing.md for the owner.
 - **Spend:** $1.01 of the $20 total (ledger files).
+
+### Update 2026-11-06 (later): books 2 and 3 built, covers redesigned, files archived in git
+
+- **Owner approved book 1 and its cover** (fun, energetic style with a half-colored crayon look). Preferences are recorded in CLAUDE.md ("Owner preferences"). Finished books are now **committed** in `books/NNN-slug/final/` (decision of the owner so nothing is lost when the container is reclaimed); `archive_book.py` produces that folder.
+- **Book 2: Cozy Cottage Coloring Book for Adults** (40 detailed scenes, 84 pages) and **Book 3: Happy Ocean Animals Coloring Book** (30 extra-simple pictures for ages 3-6, 64 pages). Niches chosen by me without demand data **[verify]**: both are untested bets in crowded categories.
+- **Quality test (3 adult prompts, same model):** low $0.006, medium $0.05, high $0.196 per image. Low gave the boldest fine lines; medium and high gave thinner, fainter lines. Low it is. The extra-simple kids instruction ("one main subject, very few details, extra thick outlines") works well.
+- **Fine detail at print size:** adult pages are 1152 x 1536 px upscaled to 300 DPI; busy textures (cushions, bushes, fabric) turn crackly up close while outlines and large shapes are clean. Interior built with cutoff 170 to thicken lines. A proof copy of book 2 is recommended before launching.
+- **Spine text rule:** KDP prints spine text above 79 pages and wants 1/16 in clear on each side, so an 84-page book (0.19 in spine) would get about 4 pt type. `make_cover.py` now leaves the spine blank below about 0.09 in of usable height (roughly 100 pages for white paper).
+- **Content-safety catch:** the first "friendly shark" for book 3 looked too close to a well-known cartoon shark (toothy grin, eyebrows); regenerated with a closed smile and no teeth.
+- **Spend:** about $2.21 of $20 including the quality tests.
