@@ -1,0 +1,143 @@
+"""Tests for scripts/make_cover.py. Run: python3 -m unittest discover -s tests -v"""
+import contextlib
+import importlib.util
+import io
+import tempfile
+import unittest
+from pathlib import Path
+
+from PIL import Image, ImageDraw
+from pypdf import PdfReader
+
+ROOT = Path(__file__).resolve().parent.parent
+SPEC = importlib.util.spec_from_file_location("make_cover", ROOT / "scripts" / "make_cover.py")
+mc = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(mc)
+
+
+def art(path: Path):
+    im = Image.new("L", (1152, 1536), 255)
+    d = ImageDraw.Draw(im)
+    d.ellipse([200, 300, 950, 1200], outline=0, width=14)
+    d.ellipse([400, 600, 500, 700], outline=0, width=10)
+    im.save(path)
+
+
+def run(argv):
+    out, err = io.StringIO(), io.StringIO()
+    with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+        code = mc.main(argv)
+    return code, out.getvalue(), err.getvalue()
+
+
+class CoverTests(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.dir = Path(self._tmp.name)
+        self.art = self.dir / "art.png"
+        art(self.art)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def build(self, pages, name="cover.pdf", extra=()):
+        out = self.dir / name
+        code, stdout, err = run([str(self.art), "-o", str(out), "--title", "Cozy Winter Animals Coloring Book",
+                                 "--subtitle", "30 Bold and Easy Pictures for Kids Ages 4-8",
+                                 "--author", "Wren Ashby", "--imprint", "Little Fox Paper Co",
+                                 "--pages", str(pages), "--blurb", "One line.|Second line.", *extra])
+        self.assertEqual(code, 0, err)
+        return out
+
+    def test_geometry_matches_kdp_formula(self):
+        g = mc.cover_geometry(64, (8.5, 11.0))
+        self.assertAlmostEqual(g["spine"], 64 * 0.002252, places=6)
+        self.assertAlmostEqual(g["total_w"], 0.125 + 8.5 + g["spine"] + 8.5 + 0.125, places=6)
+        self.assertAlmostEqual(g["total_h"], 11.25, places=6)
+
+    def test_geometry_matches_cover_dims_command(self):
+        # same numbers as build_interior's cover-dims (single source of truth)
+        g = mc.cover_geometry(64, (8.5, 11.0))
+        self.assertEqual(round(g["total_w"], 4), 17.3941)
+
+    def test_spine_text_only_from_80_pages(self):
+        self.assertFalse(mc.cover_geometry(64, (8.5, 11.0))["spine_text"])
+        self.assertFalse(mc.cover_geometry(79, (8.5, 11.0))["spine_text"])
+        self.assertTrue(mc.cover_geometry(80, (8.5, 11.0))["spine_text"])
+
+    def test_pdf_is_one_page_with_exact_size(self):
+        out = self.build(64)
+        r = PdfReader(str(out))
+        self.assertEqual(len(r.pages), 1)
+        g = mc.cover_geometry(64, (8.5, 11.0))
+        self.assertAlmostEqual(float(r.pages[0].mediabox.width) / 72, g["total_w"], places=2)
+        self.assertAlmostEqual(float(r.pages[0].mediabox.height) / 72, g["total_h"], places=2)
+
+    def test_png_pixel_size_is_300dpi(self):
+        out = self.build(64)
+        im = Image.open(out.with_suffix(".png"))
+        g = mc.cover_geometry(64, (8.5, 11.0))
+        self.assertEqual(im.size, (round(g["total_w"] * 300), round(g["total_h"] * 300)))
+
+    def test_barcode_area_is_pure_white_and_clear_of_edges(self):
+        out = self.build(64)
+        g = mc.cover_geometry(64, (8.5, 11.0))
+        x0, y0, x1, y1 = barcode_px = [round(v * 300) for v in mc.barcode_box(g)]
+        im = Image.open(out.with_suffix(".png")).convert("RGB")
+        self.assertEqual(im.crop((x0, y0, x1, y1)).getextrema(), ((255, 255), (255, 255), (255, 255)))
+        bx0, by0, bx1, by1 = mc.barcode_box(g)
+        self.assertAlmostEqual(bx1 - bx0, 2.0, places=3)
+        self.assertAlmostEqual(by1 - by0, 1.2, places=3)
+        self.assertGreaterEqual(g["back_x1"] - bx1, 0.25)  # from the spine
+        self.assertGreaterEqual(g["bottom"] - by1, 0.25)  # from the trim edge
+
+    def test_spine_is_blank_when_under_minimum(self):
+        out = self.build(64)
+        g = mc.cover_geometry(64, (8.5, 11.0))
+        im = Image.open(out.with_suffix(".png")).convert("RGB")
+        strip = im.crop((round(g["spine_x0"] * 300), 0, round(g["spine_x1"] * 300), im.height))
+        dark = sum(1 for p in strip.getdata() if sum(p) < 300)  # navy text would be dark
+        self.assertEqual(dark, 0)
+
+    def test_spine_has_text_when_allowed(self):
+        out = self.build(100, name="c100.pdf")
+        g = mc.cover_geometry(100, (8.5, 11.0))
+        im = Image.open(out.with_suffix(".png")).convert("RGB")
+        strip = im.crop((round(g["spine_x0"] * 300), 0, round(g["spine_x1"] * 300), im.height))
+        dark = sum(1 for p in strip.getdata() if p[0] < 90 and p[2] < 140)
+        self.assertGreater(dark, 500)
+
+    def test_front_text_stays_inside_safe_area(self):
+        out = self.build(64)
+        g = mc.cover_geometry(64, (8.5, 11.0))
+        im = Image.open(out.with_suffix(".png")).convert("RGB")
+        # nothing dark (text or line art) in the 0.25 in strip next to the trim edge
+        edge = round(0.25 * 300)
+        right = round(g["front_x1"] * 300)
+        top = round(g["top"] * 300)
+        for box in ((right - edge, 0, right, im.height), (round(g["front_x0"] * 300), top, round(g["front_x0"] * 300) + 2, top + 10)):
+            region = im.crop(box)
+            self.assertEqual(sum(1 for p in region.getdata() if sum(p) < 200), 0)
+
+    def test_title_lines(self):
+        self.assertEqual(mc.title_lines("Cozy Winter Animals Coloring Book"), ["Cozy Winter", "Animals", "Coloring Book"])
+        self.assertEqual(mc.title_lines("Garden Friends"), ["Garden", "Friends"])
+        self.assertEqual(mc.title_lines("Mandalas"), ["Mandalas"])
+
+    def test_missing_art_is_an_error(self):
+        code, _, err = run([str(self.dir / "nope.png"), "-o", str(self.dir / "c.pdf"), "--title", "T",
+                            "--author", "A", "--pages", "64"])
+        self.assertEqual(code, 2)
+        self.assertIn("not found", err)
+
+    def test_page_count_below_kdp_minimum_is_refused(self):
+        code, _, err = run([str(self.art), "-o", str(self.dir / "c.pdf"), "--title", "T", "--author", "A", "--pages", "10"])
+        self.assertEqual(code, 2)
+
+    def test_guides_image_written(self):
+        out = self.build(64)
+        self.assertTrue((self.dir / "cover_guides.png").exists())
+
+
+if __name__ == "__main__":
+    unittest.main()

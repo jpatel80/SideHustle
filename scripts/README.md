@@ -54,3 +54,19 @@ to `<out>/ledger.jsonl`. `--budget` stops the run before it would overspend. Vec
 
 Typical flow per book: generate -> `build_interior.py qa` -> look at flagged pages, regenerate
 the bad ones (delete the file, re-run) -> `build_interior.py build`.
+
+# scripts/make_cover.py
+
+Builds the KDP wrap-around cover PDF (back + spine + front, 300 DPI, bleed included) from one
+page image of the book, plus PNG previews (flat and with trim/spine/safe/barcode guides). Uses
+the KDP constants from `build_interior.py`; the spine gets text only at 80+ pages; the back keeps
+a blank white 2 x 1.2 in barcode area.
+
+```bash
+python3 scripts/make_cover.py books/<slug>/pages/01_*.png -o books/<slug>/cover.pdf \
+  --title "..." --subtitle "..." --author "<pen name>" --imprint "Little Fox Paper Co" \
+  --pages 64 --blurb "line one|line two"
+```
+
+Interior flag added: `build_interior.py build ... --imprint "Little Fox Paper Co"` prints the imprint
+on the title and copyright pages.

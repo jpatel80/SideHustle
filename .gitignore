@@ -7,3 +7,4 @@ books/*/pages/
 books/*/*.pdf
 # model bake-off and scratch output stay local
 out/
+books/*/cover*.png
