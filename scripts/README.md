@@ -68,6 +68,11 @@ python3 scripts/make_cover.py books/<slug>/pages/01_*.png -o books/<slug>/cover.
   --pages 64 --blurb "line one|line two"
 ```
 
+Styles: `--style fun` (default) draws a gradient with sunburst, snowflakes and confetti, a bouncy rainbow
+title (Chewy font in `assets/fonts/`, Apache 2.0), a tilted framed art panel, a ribbon for the subtitle, an
+optional starburst `--badge "30|BIG PICTURES|TO COLOR!"` and round colored `--stickers <page images>` (first 3 on
+the front, next 2 on the back). `--style plain` is the simple blue cover. Helpers live in `scripts/cover_fun.py`.
+
 `--colored-half` fills the enclosed regions of the front art with crayon colors on one side of a scribbled edge and draws a crayon at the edge ("someone is coloring it"); the lines are untouched and `--seed` changes the color choices. Needs scipy.
 
 Interior flag added: `build_interior.py build ... --imprint "Little Fox Paper Co"` prints the imprint

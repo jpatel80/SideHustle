@@ -5,7 +5,7 @@ Status: **FINAL DRAFT for owner review** (pages, interior, cover and page count 
 ## Files to upload (local, not in git)
 - Interior: `books/001-cozy-winter-animals/interior.pdf`: 64 pages, 8.5 x 11 in, no bleed, fonts embedded, 2.7 MB
 - Cover: `books/001-cozy-winter-animals/cover.pdf`: 17.3941 x 11.25 in (back + 0.1441 in spine + front, 0.125 in bleed), 5218 x 3375 px at 300 DPI. Previews: `cover.png`, `cover_guides.png` (guides show trim, spine and safe lines)
-- The front shows the owl page half colored in, as an example of coloring; the interior is black and white only, and the back cover and the description both say so. Command used: `make_cover.py ... --colored-half` (drop the flag for an all-line-art cover).
+- The front shows the owl page half colored in, as an example of coloring, with a bouncy rainbow title, a "30 big pictures to color" badge and small fully colored stickers of other pages (polar bear, puppy, kitten on the front; hare and fox on the back). The interior is black and white only, and the back cover and the description both say so. Regenerate with: `python3 scripts/make_cover.py books/001-cozy-winter-animals/pages/01_*.png -o books/001-cozy-winter-animals/cover.pdf --title "Cozy Winter Animals Coloring Book" --subtitle "30 Bold and Easy Pictures for Kids Ages 4-8" --author "Wren Ashby" --imprint "Little Fox Paper Co" --pages 64 --colored-half --badge "30|BIG PICTURES|TO COLOR!" --stickers <pages 02, 10, 24, 21, 30> --blurb "..."` (`--style plain` gives the simple blue cover).
 - Verify the cover in KDP's cover previewer; if KDP reports a different spine width, tell Claude and the cover is regenerated in seconds.
 
 ## Step 1: Paperback details

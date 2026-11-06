@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SPEC = importlib.util.spec_from_file_location("make_cover", ROOT / "scripts" / "make_cover.py")
 mc = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(mc)
+fun = mc.fun
 
 
 def art(path: Path):
@@ -178,6 +179,56 @@ class CoverTests(unittest.TestCase):
         im = Image.open(out.with_suffix(".png")).convert("RGB")
         x0, y0, x1, y1 = (round(v * 300) for v in mc.barcode_box(g))
         self.assertEqual(im.crop((x0, y0, x1, y1)).getextrema(), ((255, 255), (255, 255), (255, 255)))
+
+    def test_plain_style_still_builds_with_blank_barcode(self):
+        out = self.build(64, name="plain.pdf", extra=("--style", "plain"))
+        g = mc.cover_geometry(64, (8.5, 11.0))
+        im = Image.open(out.with_suffix(".png")).convert("RGB")
+        self.assertEqual(im.getpixel((10, 10)), mc.BG)
+        x0, y0, x1, y1 = (round(v * 300) for v in mc.barcode_box(g))
+        self.assertEqual(im.crop((x0, y0, x1, y1)).getextrema(), ((255, 255), (255, 255), (255, 255)))
+
+    def test_fun_style_with_badge_and_stickers(self):
+        out = self.build(64, name="fun.pdf", extra=("--badge", "30|BIG PICTURES|TO COLOR!", "--colored-half",
+                                                     "--stickers", str(self.art), str(self.art), str(self.art), str(self.art), str(self.art)))
+        g = mc.cover_geometry(64, (8.5, 11.0))
+        im = Image.open(out.with_suffix(".png")).convert("RGB")
+        self.assertEqual(len(PdfReader(str(out)).pages), 1)
+        # the fun style is genuinely colorful: many saturated pixels on the front
+        front = im.crop((round(g["front_x0"] * 300), 0, round(g["front_x1"] * 300), im.height)).resize((200, 260))
+        sat = sum(1 for p in front.getdata() if max(p) - min(p) > 60)
+        self.assertGreater(sat, 5000)
+        # barcode box still pure white, spine still blank (no dark pixels)
+        x0, y0, x1, y1 = (round(v * 300) for v in mc.barcode_box(g))
+        self.assertEqual(im.crop((x0, y0, x1, y1)).getextrema(), ((255, 255), (255, 255), (255, 255)))
+        strip = im.crop((round(g["spine_x0"] * 300), 0, round(g["spine_x1"] * 300), im.height))
+        self.assertEqual(sum(1 for p in strip.getdata() if sum(p) < 300), 0)
+
+    def test_missing_sticker_is_an_error(self):
+        code, _, err = run([str(self.art), "-o", str(self.dir / "c.pdf"), "--title", "T", "--author", "A", "--pages", "64",
+                            "--stickers", str(self.dir / "missing.png")])
+        self.assertEqual(code, 2)
+
+    def test_fun_gradient_and_scatter_respect_avoid_zone(self):
+        import random
+        img = fun.gradient((600, 400))
+        self.assertEqual(img.size, (600, 400))
+        self.assertNotEqual(img.getpixel((10, 5)), img.getpixel((10, 395)))  # it is a gradient
+        before = img.copy()
+        avoid = [(200, 0, 400, 400)]
+        fun.snowflakes(img, random.Random(1), 40, avoid)
+        fun.confetti(img, random.Random(2), 60, avoid)
+        self.assertNotEqual(list(img.getdata()), list(before.getdata()))
+        self.assertEqual(list(img.crop((205, 0, 395, 400)).getdata()), list(before.crop((205, 0, 395, 400)).getdata()))
+
+    def test_bouncy_line_draws_letters_and_returns_bottom(self):
+        import random
+        from PIL import ImageFont
+        font = ImageFont.truetype(str(mc.FUN_FONT), 120)
+        img = Image.new("RGB", (900, 300), (200, 220, 250))
+        bottom = fun.bouncy_line(img, "Hello Fun", font, 450, 20, fun.FUN_COLORS, random.Random(0))
+        self.assertGreater(bottom, 20 + 100)
+        self.assertNotEqual(img.getextrema(), ((200, 200), (220, 220), (250, 250)))
 
     def test_missing_art_is_an_error(self):
         code, _, err = run([str(self.dir / "nope.png"), "-o", str(self.dir / "c.pdf"), "--title", "T",

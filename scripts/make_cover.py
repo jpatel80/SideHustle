@@ -36,6 +36,12 @@ _SPEC = importlib.util.spec_from_file_location("build_interior", Path(__file__).
 bi = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(bi)
 
+_FSPEC = importlib.util.spec_from_file_location("cover_fun", Path(__file__).resolve().parent / "cover_fun.py")
+fun = importlib.util.module_from_spec(_FSPEC)
+_FSPEC.loader.exec_module(fun)
+
+FUN_FONT = Path(__file__).resolve().parent.parent / "assets" / "fonts" / "Chewy-Regular.ttf"  # Apache 2.0, see assets/fonts
+
 DPI = bi.DPI
 SAFE = 0.4  # inches kept clear of the trim edge for text (KDP minimum is 0.25)
 BARCODE_W, BARCODE_H = 2.0, 1.2  # KDP suggested barcode size, inches
@@ -241,16 +247,22 @@ def draw_crayon(panel: Image.Image, tip: tuple[float, float], color=ACCENT, scal
     panel.alpha_composite(ov) if panel.mode == "RGBA" else panel.paste(ov, (0, 0), ov)
 
 
+def crop_to_ink(art: Image.Image) -> Image.Image:
+    """Crop a grayscale page to its ink (plus a small pad)."""
+    box = art.point(lambda v: 255 if v < 200 else 0).getbbox()
+    if not box:
+        return art
+    pad = int(0.03 * max(art.size))
+    return art.crop((max(0, box[0] - pad), max(0, box[1] - pad), min(art.width, box[2] + pad), min(art.height, box[3] + pad)))
+
+
 def line_art_panel(art_path: Path, size: tuple[int, int], colorize: bool = False, seed: int = 3) -> Image.Image:
     """White rounded panel containing the line art, fitted inside `size`."""
     pw, ph = size
     panel = Image.new("RGB", size, PANEL)
     art = Image.open(art_path).convert("L")
     art = ImageOps.autocontrast(art)
-    box = art.point(lambda v: 255 if v < 200 else 0).getbbox()  # crop to the ink, keep a small pad
-    if box:
-        pad = int(0.03 * max(art.size))
-        art = art.crop((max(0, box[0] - pad), max(0, box[1] - pad), min(art.width, box[2] + pad), min(art.height, box[3] + pad)))
+    art = crop_to_ink(art)
     inner = (int(pw * 0.92), int(ph * 0.92))
     scale = min(inner[0] / art.width, inner[1] / art.height)
     tip, crayon = None, ACCENT
@@ -371,7 +383,7 @@ def draw_spine(img, g, a, title_font_path, body_font_path) -> None:
     sw, sh = x1 - x0 - 2 * px(SPINE_SAFE), bottom - top - 2 * px(SAFE)
     if sw <= 0:
         return
-    strip = Image.new("RGBA", (sh, sw), (0, 0, 0, 0))
+    strip = Image.new("RGBA", (sh, sw), (255, 255, 255, 235) if a.style == "fun" else (0, 0, 0, 0))
     d = ImageDraw.Draw(strip)
     text = f"{a.title}   |   {a.author}"
     f = fit_font(d, text, title_font_path, sh, px(0.5))
@@ -379,6 +391,180 @@ def draw_spine(img, g, a, title_font_path, body_font_path) -> None:
     d.text(((sh - d.textlength(text, font=f)) / 2, (sw - (asc + desc)) / 2), text, font=f, fill=INK + (255,))
     rot = strip.rotate(-90, expand=True)  # reads top-to-bottom, as US paperbacks do
     img.paste(rot, (x0 + px(SPINE_SAFE), top + px(SAFE)), rot)
+
+
+# ----------------------------------------------------------------------------- fun style
+def fun_font_path(a, fallback: str) -> str:
+    return str(FUN_FONT) if FUN_FONT.is_file() else fallback
+
+
+def colored_sticker(art_path: Path, diameter: int, seed: int, angle: float) -> Image.Image:
+    """Round sticker of a book page, fully colored in with crayon colors."""
+    art = crop_to_ink(ImageOps.autocontrast(Image.open(art_path).convert("L")))
+    rgb, _, _ = colorize_half(art, seed=seed, split=2.0, jitter=False)
+    return fun.circle_sticker(rgb, diameter, angle)
+
+
+def paste_center(img: Image.Image, tile: Image.Image, cx: float, cy: float) -> None:
+    img.paste(tile, (round(cx - tile.width / 2), round(cy - tile.height / 2)), tile)
+
+
+def fit_ribbon(text: str, path: str, max_w: int, start: int) -> Image.Image:
+    size = start
+    while size > 24:
+        r = fun.ribbon(text, ImageFont.truetype(path, size))
+        if r.width <= max_w:
+            return r
+        size -= 4
+    return fun.ribbon(text, ImageFont.truetype(path, 24))
+
+
+def outlined(d, cx: int, y: int, text: str, font, fill=(255, 255, 255), stroke: int = 7) -> int:
+    w = d.textlength(text, font=font)
+    d.text((cx - w / 2, y), text, font=font, fill=fill, stroke_width=stroke, stroke_fill=fun.NAVY)
+    a, de = font.getmetrics()
+    return y + a + de
+
+
+def draw_front_fun(img, g, a, fpath, body_font_path, art_path) -> None:  # noqa: C901
+    rng = random.Random(a.seed)
+    d = ImageDraw.Draw(img)
+    x0, x1 = px(g["front_x0"]), px(g["front_x1"])
+    top, bottom = px(g["top"]), px(g["bottom"])
+    cx = (x0 + x1) // 2
+    safe = px(SAFE)
+    safe_w = (x1 - x0) - 2 * safe
+
+    # bouncy rainbow title
+    lines = title_lines(a.title)
+    size = min(fit_font(d, ln, fpath, safe_w - 90, px(1.05)).size for ln in lines)
+    f = ImageFont.truetype(fpath, size)
+    colors = fun.FUN_COLORS[:]
+    rng.shuffle(colors)
+    y = top + safe - 10
+    for ln in lines:
+        y = fun.bouncy_line(img, ln, f, cx, y, colors, rng, stroke=max(7, size // 22), halo=max(9, size // 16)) - size * 0.16
+
+    # layout: art panel between title and ribbon / author
+    ribbon_h, author_h = px(1.0), px(1.05)
+    art_top = int(y + size * 0.16 + px(0.1))
+    art_bottom = bottom - safe - author_h - ribbon_h
+    ph = art_bottom - art_top
+    pw = min(int(safe_w * 0.72), int(ph * 0.93))
+    ph = min(ph, int(pw * 1.15))
+    pcy = art_top + ph // 2
+    pl, pr, pt, pb = cx - pw // 2, cx + pw // 2, pcy - ph // 2, pcy + ph // 2
+
+    # stickers peek out from behind the art panel (scrapbook look)
+    n_front = min(3, len(a.stickers))
+    D = int(pw * 0.25)
+    R = D // 2 + 18
+    lo, hi = x0 + safe + R, x1 - safe - R
+    spots = [(pl - 0.02 * pw, pb - 0.24 * ph, -10), (pr + 0.02 * pw, pb - 0.30 * ph, 9), (pl - 0.02 * pw, pt + 0.30 * ph, 7)]
+    for i in range(n_front):
+        sx, sy, ang = spots[i]
+        s = colored_sticker(Path(a.stickers[i]), D, seed=a.seed + 10 + i, angle=ang)
+        paste_center(img, s, min(max(sx, lo), hi), sy)
+
+    panel = line_art_panel(art_path, (pw, ph), colorize=a.colored_half, seed=a.seed)
+    framed = fun.framed(panel, angle=-3.0)
+    paste_center(img, framed, cx, pcy)
+
+    # starburst badge
+    if a.badge:
+        parts = [s.strip() for s in a.badge.split("|") if s.strip()]
+        rel = [0.62] + [0.21] * (len(parts) - 1)
+        rb = int(pw * 0.16)
+        badge = fun.starburst(list(zip(parts, rel)), rb, font_path=fpath).rotate(12, resample=Image.BICUBIC, expand=True)
+        bx = min(pr - 0.02 * pw, x1 - safe - rb - 20)
+        paste_center(img, badge, bx, pt + 0.10 * ph)
+
+    # ribbon banner with the subtitle
+    if a.subtitle:
+        rib = fit_ribbon(a.subtitle, fpath, safe_w, px(0.36)).rotate(-2.0, resample=Image.BICUBIC, expand=True)
+        paste_center(img, rib, cx, pb + ribbon_h * 0.42)
+
+    # author + imprint
+    af = fit_font(d, a.author, fpath, safe_w - 40, px(0.78))
+    ay = bottom - safe - author_h + px(0.02)
+    ay = outlined(d, cx, ay, a.author, af, stroke=max(6, af.size // 14))
+    if a.imprint:
+        imf = ImageFont.truetype(fpath, px(0.27))
+        outlined(d, cx, ay - px(0.02), a.imprint, imf, stroke=4)
+
+
+def draw_back_fun(img, g, a, fpath, body_font_path) -> None:
+    rng = random.Random(a.seed + 1)
+    d = ImageDraw.Draw(img)
+    x0, x1 = px(g["back_x0"]), px(g["back_x1"])
+    top, bottom = px(g["top"]), px(g["bottom"])
+    cx = (x0 + x1) // 2
+    safe = px(SAFE)
+    pad = px(0.35)
+    card_w = (x1 - x0) - 2 * safe
+    text_w = card_w - 2 * pad
+
+    # measure the card contents first
+    tf = ImageFont.truetype(fpath, px(0.58))
+    title_lines_ = title_lines(a.title)
+    while max(sum(tf.getlength(c) + 4 for c in ln) for ln in title_lines_) > text_w * 0.92 and tf.size > 30:
+        tf = ImageFont.truetype(fpath, tf.size - 4)
+    bf = ImageFont.truetype(body_font_path, px(0.27))
+    paras = [wrap(d, para, bf, text_w) for para in a.blurb]
+    lh = lambda f: f.getmetrics()[0] + f.getmetrics()[1]
+    height = pad + len(title_lines_) * lh(tf) + px(0.2) + sum(len(p) * (lh(bf) + px(0.04)) + px(0.2) for p in paras) + pad // 2
+    card_top = top + safe
+    card = Image.new("RGBA", (card_w, int(height)), (0, 0, 0, 0))
+    cd = ImageDraw.Draw(card)
+    cd.rounded_rectangle([0, 0, card_w - 1, int(height) - 1], radius=70, fill=(255, 255, 255, 245), outline=fun.NAVY, width=10)
+    img.paste(card, (x0 + safe, card_top), card)
+
+    colors = fun.FUN_COLORS[:]
+    rng.shuffle(colors)
+    y = card_top + pad
+    for ln in title_lines_:
+        y = fun.bouncy_line(img, ln, tf, cx, y, colors, rng, stroke=5, halo=0, bounce=6, tilt=3) - 4
+    y += px(0.2)
+    for para in paras:
+        for ln in para:
+            y = centered(d, cx, y, ln, bf, fun.NAVY) + px(0.04)
+        y += px(0.2)
+
+    # stickers along the bottom-left (clear of the barcode box)
+    back_stickers = a.stickers[3:5]
+    D = px(1.55)
+    for k, s_path in enumerate(back_stickers):
+        s = colored_sticker(Path(s_path), D, seed=a.seed + 20 + k, angle=(-8, 7)[k % 2])
+        paste_center(img, s, x0 + safe + D // 2 + 18 + k * (D + px(0.3)), bottom - safe - D // 2 - 18)
+
+    # barcode keep-out: solid white, nothing inside
+    bx0, by0, bx1, by1 = (px(v) for v in barcode_box(g))
+    d.rectangle([bx0, by0, bx1, by1], fill=(255, 255, 255))
+    if a.imprint:
+        imf = ImageFont.truetype(fpath, px(0.27))
+        outlined(d, (bx0 + bx1) // 2, by0 - px(0.55), a.imprint, imf, stroke=4)
+
+
+def compose_fun(a, g: dict) -> Image.Image:
+    W, H = px(g["total_w"]), px(g["total_h"])
+    img = fun.gradient((W, H))
+    rnd = random.Random(a.seed)
+    cy = (px(g["top"]) + px(g["bottom"])) // 2
+    fun.sunburst(img, ((px(g["front_x0"]) + px(g["front_x1"])) / 2, cy), alpha=26)
+    fun.sunburst(img, ((px(g["back_x0"]) + px(g["back_x1"])) / 2, cy), alpha=26)
+    bb = barcode_box(g)
+    fcx = (px(g["front_x0"]) + px(g["front_x1"])) // 2
+    avoid = [(px(g["spine_x0"] - 0.12), 0, px(g["spine_x1"] + 0.12), H),
+             (fcx - px(1.7), px(g["bottom"]) - px(0.95), fcx + px(1.7), px(g["bottom"]) - px(0.2)),
+             (px(bb[0] - 0.2), px(bb[1] - 0.2), px(bb[2] + 0.2), px(bb[3] + 0.2))]
+    fun.snowflakes(img, rnd, 55, avoid)
+    fun.confetti(img, rnd, 90, avoid)
+    fpath = fun_font_path(a, find_font(a.bold_font))
+    body = find_body_font(a.font, find_font(a.bold_font))
+    draw_front_fun(img, g, a, fpath, body, Path(a.art))
+    draw_back_fun(img, g, a, fpath, body)
+    draw_spine(img, g, a, find_font(a.bold_font), body)
+    return img
 
 
 def draw_guides(img: Image.Image, g: dict) -> Image.Image:
@@ -397,6 +583,8 @@ def draw_guides(img: Image.Image, g: dict) -> Image.Image:
 
 
 def compose(a, g: dict) -> Image.Image:
+    if a.style == "fun":
+        return compose_fun(a, g)
     img = Image.new("RGB", (px(g["total_w"]), px(g["total_h"])), BG)
     snow_dots(img, g)
     title_font = find_font(a.bold_font)
@@ -427,6 +615,11 @@ def make_parser() -> argparse.ArgumentParser:
     p.add_argument("--trim", type=bi.parse_trim, default=(8.5, 11.0))
     p.add_argument("--paper", choices=sorted(bi.SPINE_PER_PAGE), default="white")
     p.add_argument("--blurb", default="", help="back-cover lines separated by '|'")
+    p.add_argument("--style", choices=["fun", "plain"], default="fun",
+                   help="fun: gradient, snowflakes, confetti, bouncy rainbow title, stickers; plain: the simple blue cover")
+    p.add_argument("--badge", default="", help="starburst text for the fun style, lines separated by '|' (e.g. '30|PICTURES|TO COLOR')")
+    p.add_argument("--stickers", nargs="+", default=[], metavar="IMG",
+                   help="book page images shown as fully colored round stickers (first 3 on the front, next 2 on the back)")
     p.add_argument("--colored-half", action="store_true",
                    help="color in half of the front art (crayon look, with a crayon) and leave the rest line art")
     p.add_argument("--seed", type=int, default=3, help="random seed for the crayon colors")
@@ -438,8 +631,9 @@ def make_parser() -> argparse.ArgumentParser:
 def main(argv=None) -> int:
     a = make_parser().parse_args(argv)
     a.blurb = [s.strip() for s in a.blurb.split("|") if s.strip()]
-    if not Path(a.art).is_file():
-        print(f"art file not found: {a.art}", file=sys.stderr)
+    missing = [s for s in [a.art, *a.stickers] if not Path(s).is_file()]
+    if missing:
+        print(f"art file not found: {missing[0]}", file=sys.stderr)
         return 2
     if not bi.MIN_PAGES <= a.pages <= bi.MAX_PAGES:
         print(f"--pages must be {bi.MIN_PAGES}-{bi.MAX_PAGES}", file=sys.stderr)
