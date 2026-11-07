@@ -35,3 +35,8 @@ Read MEMORY.md (summary of everything agreed), then TODO.md and PLAN.md. This fi
 - **Look at every generated page yourself**, reroll bad ones (cheap), and show the owner a contact sheet of all pages plus the cover. Default model `openai/gpt-image-2` at `--quality low` (about $0.006/image); use `--quality medium` for fine-detail pages (about $0.05/image).
 - **Tell the owner about every skipped step, failure or unverified claim**; mark unverified claims **[verify]**.
 - Stop for owner approval before starting a new batch of books; after approval, build books end to end (pages, QA, interior, cover, listing, archive, commit, push, send files).
+
+## Branch workflow (owner's instruction, 2026-11-07)
+- **`main` is the branch the owner reads** (docs, listings, finished books under `books/NNN-slug/final/`). It should also be GitHub's default branch; Claude cannot change repository settings from a session, so the owner sets that in GitHub (Settings > Branches > Default branch).
+- Work on the session branch as usual. **When a task is finished and the owner approves it, merge it into `main` and push `main`** (fast-forward when possible, otherwise a normal merge commit; never force-push `main`, never rewrite its history). Do not merge unapproved work into `main`.
+- Say in the reply that `main` was updated and which commit it now points to.

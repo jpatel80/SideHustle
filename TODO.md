@@ -28,6 +28,9 @@ Do these in order. Section A1-A3 can be done any time before the new session; no
 - [ ] In the cloud environment settings (environment menu in the session title bar > Edit) add the key as an environment variable named **`OPENROUTER_API_KEY`**. Never paste it in chat or commit it.
 - [ ] In the same settings, confirm `openrouter.ai` is in the allowed network domains (it was reachable on 2026-11-05).
 
+### A3b. Make `main` the default branch (2 minutes, you)
+- [ ] On GitHub: repo **Settings > Branches > Default branch**, switch it to **main** (it currently points at the old `claude/serene-maxwell-swxha4`). Claude cannot change repository settings from a session.
+
 ### A4. Start the next session
 - [ ] When A1-A3 are done, start a **new session** on this repo and paste the prompt in `NEW_SESSION_PROMPT.md`.
 

@@ -44,3 +44,6 @@ See TODO.md section A: check Wren Ashby on Amazon, register domains, claim handl
 - Owner preferences for all future books are in CLAUDE.md ("Owner preferences"): fun/energetic covers (half-colored art with a crayon, rainbow bouncy title, badge, ribbon, stickers), B&W-inside note on the cover, look at every page, archive and commit finished books, send files with SendUserFile (the owner cannot open container files).
 - New scripts: `make_cover.py` (+ `cover_fun.py`, Chewy font in `assets/fonts/`), `archive_book.py`. 57+ tests.
 - Books 2 (adult, cozy cottage, 40 pictures, 84 pages) and 3 (kids 3-6, happy ocean animals, 30 pictures, 64 pages) were built after approval, covers in the same fun style with garden and ocean themes, files archived in `final/` folders and committed. Both wait for the owner to review. Spend so far about $2.21 of $20. Niches are untested guesses [verify].
+
+## Branch workflow (2026-11-07)
+- `main` was created from the full work so far (books 1-3, scripts, docs) and is the branch the owner reads. Owner must set it as GitHub's default branch (Claude cannot change repo settings). After the owner approves a finished task, merge the session branch into `main` and push it. See CLAUDE.md "Branch workflow".
