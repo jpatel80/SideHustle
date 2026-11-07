@@ -43,21 +43,37 @@ The illustrations in this book were created with AI image tools and were selecte
 
 Slot limits (about 50 characters each) **[verify]**. "Cottagecore" is a general style word, not a brand. No wellness or health claims (no "stress relief", "anxiety", "therapy").
 
-### Categories (choose two)
-Closest fit: an adult coloring-book category (for example Crafts, Hobbies & Home > Coloring Books for Grown-Ups) and a nature / gardens subcategory. **[verify]** menu paths; do not choose a children's category.
+### Categories (up to three)
+KDP lets you pick **up to 3 categories**, from a list based on your primary audience and primary marketplace, and says wrong categories can be changed by KDP. Closest fit: an adult coloring-book category (for example Crafts, Hobbies & Home > Coloring Books for Grown-Ups) and a nature / gardens subcategory. **[verify]** menu paths; do not choose a children's category.
 
 ## Step 2: Paperback content
 - **Print ISBN:** use the free KDP ISBN. Coloring books are "not generally low-content" per KDP's help, so it should be offered **[verify in form]**.
 - **Manuscript:** upload `interior.pdf`. **Bleed: No bleed.** Trim size 8.5 x 11 in. Black & white interior, **white** paper (the cover's spine width assumes white paper).
 - **Cover:** upload `cover.pdf` (print-ready PDF). Do not upload your own barcode.
 - **Generative AI content question:** answer **Yes**. The images are **AI-generated** (not just AI-assisted): generated with OpenAI's GPT Image 2 through OpenRouter, then selected, cropped and converted to black and white by us. No AI-written text inside the book other than the title, copyright and "belongs to" pages we wrote. If unsure about the store-page text (drafted with Claude's help), disclose rather than skip **[verify]**.
+- **Also disclose the text.** KDP defines AI-generated as content an AI tool created, even if you edit it afterwards; AI-assisted (no disclosure needed) means you wrote it yourself and only used AI to polish. The title, subtitle, description, back-cover blurb and the title/copyright-page wording were drafted with Claude's help, so the conservative, honest answer is to tick **text** as AI-generated too. Under-disclosing is the risk KDP warns about; over-disclosing has no stated penalty. (KDP Content Guidelines, fetched 2026-11-07; **[verify]** the exact wording in the form.)
 - **Previewer:** page through the whole book in KDP's previewer. Fine-detail pages (cottage scenes) should be checked closely for line quality.
 
 ## Step 3: Pricing
-- **Printing cost (Amazon.com, B&W, 8.5 x 11, 24-110 pages):** a flat **$2.84 per book** (KDP's Paperback Printing Cost page, fetched 2026-11-06). Check the calculator in the form.
-- **Minimum list price:** $2.84 / 0.60 = about **$4.73** at the 60% rate (about $5.68 at 50%). **[verify which rate applies]**
-- **Royalty examples (my estimates):** at $9.99 and 60%: **$3.15** per sale; at $8.99: **$2.55**; at $7.99: **$1.95**.
-- **Suggested starting price:** $8.99-$10.99. Adult coloring books usually list a little higher than kids' ones but I could not check competitor prices from this environment; compare a few similar titles yourself.
+- **Printing cost (Amazon.com, B&W, 8.5 x 11, 24-110 pages):** a flat **$2.84 per book** (KDP "Paperback Printing Cost" page, fetched 2026-11-07; the calculator in the form is the final word).
+- **Royalty rate depends on the list price (Amazon.com):** **50% up to $9.98, 60% from $9.99** (KDP "Paperback Royalty" page, fetched 2026-11-07). Royalty = rate x list price - $2.84.
+- **Minimum list price:** $2.84 / 0.50 = **$5.68** (KDP will not accept less).
+
+  | List price | Rate | Royalty per sale (about) |
+  |---|---|---|
+  | $6.99 | 50% | $0.66 |
+  | $7.99 | 50% | $1.16 |
+  | $8.99 | 50% | $1.66 |
+  | $9.98 | 50% | $2.15 |
+  | **$9.99** | **60%** | **$3.15** |
+  | $10.99 | 60% | $3.75 |
+  | $11.99 | 60% | $4.35 |
+  | $12.99 | 60% | $4.95 |
+
+  The jump between $9.98 and $9.99 is worth a full **$1.00** per copy. (Earlier drafts of this listing wrongly assumed the 60% rate applied at $7.99; that was my error.)
+- **Expanded Distribution:** leave it **off**. KDP's own page lists coloring books as content its distributors do not accept, and it pays only 40% of list price.
+- **Marketplace and territories:** primary marketplace Amazon.com; all territories.
+- **Suggested starting price:** **$9.99-$10.99** (royalty $3.15-$3.75); adult coloring books often list a little higher than kids' ones, but I cannot see competitor prices from this environment, so check 5-10 similar titles on Amazon yourself.
 
 ## Owner decisions and honest caveats
 1. **AI disclosure** is Yes in the form, and the copyright page says the art was created with AI image tools. Do not remove either.

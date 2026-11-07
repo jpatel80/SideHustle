@@ -44,21 +44,37 @@ The illustrations in this book were created with AI image tools and were selecte
 
 Slot limits (about 50 characters each) **[verify]**. No brand names. Note: nothing is described as educational.
 
-### Categories (choose two)
-Closest fit: a children's coloring-book category and a children's animals / ocean category. **[verify]** menu paths.
+### Categories (up to three)
+KDP lets you pick **up to 3 categories**, from a list based on your primary audience and primary marketplace, and says wrong categories can be changed by KDP. Closest fit: a children's coloring-book category and a children's animals / ocean category. **[verify]** menu paths.
 
 ## Step 2: Paperback content
 - **Print ISBN:** use the free KDP ISBN **[verify it is offered]**.
 - **Manuscript:** upload `interior.pdf`. **Bleed: No bleed.** Trim size 8.5 x 11 in. Black & white interior, **white** paper.
 - **Cover:** upload `cover.pdf`. Do not upload your own barcode.
 - **Generative AI content question:** answer **Yes**: **AI-generated** images made with OpenAI's GPT Image 2 through OpenRouter, selected, cropped and converted to black and white by us. If unsure about the store-page text (drafted with Claude's help), disclose rather than skip **[verify]**.
+- **Also disclose the text.** KDP defines AI-generated as content an AI tool created, even if you edit it afterwards; AI-assisted (no disclosure needed) means you wrote it yourself and only used AI to polish. The title, subtitle, description, back-cover blurb and the title/copyright-page wording were drafted with Claude's help, so the conservative, honest answer is to tick **text** as AI-generated too. Under-disclosing is the risk KDP warns about; over-disclosing has no stated penalty. (KDP Content Guidelines, fetched 2026-11-07; **[verify]** the exact wording in the form.)
 - **Previewer:** page through the whole book in KDP's previewer.
 
 ## Step 3: Pricing
-- **Printing cost (Amazon.com, B&W, 8.5 x 11, 24-110 pages):** flat **$2.84 per book** (KDP's Paperback Printing Cost page, fetched 2026-11-06).
-- **Minimum list price:** about **$4.73** at the 60% rate (about $5.68 at 50%) **[verify which rate applies]**.
-- **Royalty examples (my estimates):** $7.99 at 60% = **$1.95** per sale; $6.99 = **$1.35**; $9.99 = **$3.15**.
-- **Suggested starting price:** $6.99-$8.99. Compare a few similar kids' coloring books on Amazon yourself; I could not check competitor prices from this environment.
+- **Printing cost (Amazon.com, B&W, 8.5 x 11, 24-110 pages):** a flat **$2.84 per book** (KDP "Paperback Printing Cost" page, fetched 2026-11-07; the calculator in the form is the final word).
+- **Royalty rate depends on the list price (Amazon.com):** **50% up to $9.98, 60% from $9.99** (KDP "Paperback Royalty" page, fetched 2026-11-07). Royalty = rate x list price - $2.84.
+- **Minimum list price:** $2.84 / 0.50 = **$5.68** (KDP will not accept less).
+
+  | List price | Rate | Royalty per sale (about) |
+  |---|---|---|
+  | $6.99 | 50% | $0.66 |
+  | $7.99 | 50% | $1.16 |
+  | $8.99 | 50% | $1.66 |
+  | $9.98 | 50% | $2.15 |
+  | **$9.99** | **60%** | **$3.15** |
+  | $10.99 | 60% | $3.75 |
+  | $11.99 | 60% | $4.35 |
+  | $12.99 | 60% | $4.95 |
+
+  The jump between $9.98 and $9.99 is worth a full **$1.00** per copy. (Earlier drafts of this listing wrongly assumed the 60% rate applied at $7.99; that was my error.)
+- **Expanded Distribution:** leave it **off**. KDP's own page lists coloring books as content its distributors do not accept, and it pays only 40% of list price.
+- **Marketplace and territories:** primary marketplace Amazon.com; all territories.
+- **Suggested starting price:** **$9.99** if it is competitive with similar simple kids' coloring books (royalty $3.15); at $6.99-$7.99 the royalty is only $0.66-$1.16. I cannot see competitor prices from this environment: compare 5-10 similar titles yourself before choosing.
 
 ## Owner decisions and honest caveats
 1. **AI disclosure** is Yes in the form and on the copyright page. Do not remove either.
