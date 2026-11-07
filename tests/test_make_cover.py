@@ -84,6 +84,21 @@ class CoverTests(unittest.TestCase):
         self.assertAlmostEqual(float(r.pages[0].mediabox.width) / 72, g["total_w"], places=2)
         self.assertAlmostEqual(float(r.pages[0].mediabox.height) / 72, g["total_h"], places=2)
 
+    def test_cover_pdf_declares_no_unembedded_fonts(self):
+        out = self.build(64)
+        r = PdfReader(str(out))
+        page = r.pages[0]
+        fonts = (page.get("/Resources") or {}).get("/Font") or {}
+        for name, ref in dict(fonts).items():
+            f = ref.get_object()
+            desc = f.get("/FontDescriptor")
+            if desc is None and f.get("/Subtype") == "/Type0":
+                desc = f["/DescendantFonts"][0].get_object().get("/FontDescriptor")
+            embedded = desc is not None and any(k in desc.get_object() for k in ("/FontFile", "/FontFile2", "/FontFile3"))
+            self.assertTrue(embedded, f"font {name} ({f.get('/BaseFont')}) is not embedded")
+        self.assertEqual(r.metadata.title, "Cozy Winter Animals Coloring Book (cover)")
+        self.assertEqual(r.metadata.author, "Wren Ashby")
+
     def test_png_pixel_size_is_300dpi(self):
         out = self.build(64)
         im = Image.open(out.with_suffix(".png"))

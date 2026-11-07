@@ -605,9 +605,17 @@ def compose(a, g: dict) -> Image.Image:
     return img
 
 
-def save_pdf(img: Image.Image, path: Path, g: dict) -> None:
+def save_pdf(img: Image.Image, path: Path, g: dict, title: str = "", author: str = "") -> None:
     w_pt, h_pt = g["total_w"] * 72.0, g["total_h"] * 72.0
-    c = canvas.Canvas(str(path), pagesize=(w_pt, h_pt), pageCompression=1)
+    # initialFontName matters: reportlab otherwise declares an un-embedded Helvetica on the page, and KDP requires
+    # every font on the cover to be embedded (same fix as in build_interior.py).
+    body_font, _ = bi.register_fonts(None, None)
+    c = canvas.Canvas(str(path), pagesize=(w_pt, h_pt), pageCompression=1, initialFontName=body_font)
+    if title:
+        c.setTitle(f"{title} (cover)")
+    if author:
+        c.setAuthor(author)
+    c.setCreator("SideHustle make_cover.py")
     c.drawImage(ImageReader(img), 0, 0, width=w_pt, height=h_pt)
     c.showPage()
     c.save()
@@ -654,7 +662,7 @@ def main(argv=None) -> int:
     img = compose(a, g)
     out = Path(a.output)
     out.parent.mkdir(parents=True, exist_ok=True)
-    save_pdf(img, out, g)
+    save_pdf(img, out, g, a.title, a.author)
     img.save(out.with_suffix(".png"), dpi=(DPI, DPI))
     draw_guides(img, g).save(out.with_name(out.stem + "_guides.png"), dpi=(DPI, DPI))
     print(
