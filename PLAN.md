@@ -238,3 +238,11 @@ Your Claude subscription is the main ongoing cost and is not counted above.
 - **Spine text rule:** KDP prints spine text above 79 pages and wants 1/16 in clear on each side, so an 84-page book (0.19 in spine) would get about 4 pt type. `make_cover.py` now leaves the spine blank below about 0.09 in of usable height (roughly 100 pages for white paper).
 - **Content-safety catch:** the first "friendly shark" for book 3 looked too close to a well-known cartoon shark (toothy grin, eyebrows); regenerated with a closed smile and no teeth.
 - **Spend:** about $2.21 of $20 including the quality tests.
+
+### Update 2026-11-07: KDP publishing research (full plan in research/kdp_publishing_plan_2026-11-07.md)
+
+- **No KDP API and no publishing MCP/CLI exists.** Amazon's Conditions of Use exclude "robots" and KDP can suspend accounts for "activity concerns", so the owner publishes by hand (about 15 minutes per book). Claude automates everything around it.
+- **KDP allows 2 new titles per format per week** (creation and submission counted separately): three books take two weeks.
+- **CORRECTION to my earlier royalty numbers:** on Amazon.com the royalty is **50% up to $9.98 and 60% from $9.99** (official KDP page). The earlier line "$7.99 and 60% gives about $1.95" was wrong: $7.99 gives about $1.16; $9.99 gives about $3.15. Break-even ad cost of sale is about 14% at $7.99 and 32% at $9.99, so ads are unlikely to pay at low prices.
+- **Other corrections:** categories up to 3 (not 2); Expanded Distribution off (coloring books are on KDP's not-accepted list); AI text must be disclosed too; pen names are allowed per KDP's own page.
+- **File check:** interiors pass KDP's specs; the **cover PDFs declared an unembedded Helvetica** (fixed in make_cover.py, covers rebuilt with identical images). Blank backs make about half of each interior blank; KDP lists "excessive blank pages" as a failure cause without a number, so this is a low-moderate risk with a known fallback.

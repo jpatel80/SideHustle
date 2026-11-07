@@ -18,9 +18,9 @@ A small side project to earn a little toward monthly bills by publishing **color
 
 ## Publishing a book (owner steps, about 10-15 minutes each)
 
-1. Read `listing.md`, check the **[verify]** items in the KDP form, and check that the pen name is free on Amazon (see [TODO.md](TODO.md), section A1).
+1. Follow the step-by-step plan in [research/kdp_publishing_plan_2026-11-07.md](research/kdp_publishing_plan_2026-11-07.md) (KDP allows only 2 new titles per format per week, so the three books take two weeks), read `listing.md`, check the **[verify]** items in the KDP form, and check that the pen name is free on Amazon (see [TODO.md](TODO.md), section A1).
 2. In KDP: create a paperback, paste the listing fields, upload `interior.pdf` (no bleed, 8.5 x 11, black and white, white paper) and `cover.pdf`.
-3. Answer **Yes** to AI-generated images (the art is AI-generated; the copyright page and back cover also say so).
+3. Answer **Yes** to AI-generated images, and, to be safe, to AI-generated text too (see the plan; the copyright page also says the art is AI-generated).
 4. Check every page in KDP's online previewer. Optionally order a proof copy (recommended for book 2, whose fine texture is the weakest point).
 5. Choose a price after seeing KDP's minimum list price and royalty figures, then press Publish.
 
@@ -29,7 +29,7 @@ A small side project to earn a little toward monthly bills by publishing **color
 - **Pen name:** books use *Wren Ashby*; the author name cannot be changed after publishing. Whether the adult book should use a second name is an open question.
 - **AI disclosure:** required and already built in. Never remove it.
 - **Copyright:** purely AI-generated images may not be copyrightable in the US **[verify]**; the "I own the copyright" tick in the form is the owner's call.
-- **Money:** KDP's print cost for these books is a flat $2.84, so the royalty at $7.99 is roughly $1.95 per copy (estimate). Reaching a few hundred dollars a month would take many sales.
+- **Money:** KDP's print cost for these books is a flat $2.84, and the royalty rate is **50% up to a $9.98 list price and 60% from $9.99** (official). So $7.99 earns about $1.16 per copy, $9.99 about $3.15 (my arithmetic). Reaching a few hundred dollars a month would take many sales. Details in [research/kdp_publishing_plan_2026-11-07.md](research/kdp_publishing_plan_2026-11-07.md).
 - **Trademark:** the imprint is always the full "Little Fox Paper Co", never "Little Fox" alone, and the books are not positioned as educational (see [research/](research)).
 
 ## How the books are made
@@ -50,7 +50,7 @@ More detail and example commands: [scripts/README.md](scripts/README.md).
 
 ```bash
 pip install -r requirements.txt
-python3 -m unittest discover -s tests      # 60 tests
+python3 -m unittest discover -s tests      # 61 tests
 ```
 
 ## What has been spent
@@ -64,6 +64,7 @@ About **$2.21 of the $20** image budget (bake-off $0.68, quality tests $0.77, bo
 | [MEMORY.md](MEMORY.md) | Short summary of everything decided so far (read this first) |
 | [CLAUDE.md](CLAUDE.md) | Rules that always apply, plus the owner's preferences for covers and workflow |
 | [TODO.md](TODO.md) | Owner steps, Claude's status, gates and spending caps |
+| [research/kdp_publishing_plan_2026-11-07.md](research/kdp_publishing_plan_2026-11-07.md) | How to publish on KDP: researched step-by-step, calendar, money, risks |
 | [PLAN.md](PLAN.md) | The full plan, research (with sources marked [verify] where unconfirmed) and a dated decision log |
 | [research/](research) | Pen-name and trademark checks |
 | [`.claude/skills/`](.claude/skills) | Project skills for the book pipeline and the listing writer |

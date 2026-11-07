@@ -34,7 +34,11 @@ Do these in order. Section A1-A3 can be done any time before the new session; no
 ### A4. Start the next session
 - [ ] When A1-A3 are done, start a **new session** on this repo and paste the prompt in `NEW_SESSION_PROMPT.md`.
 
-### A5. After the first draft is ready (the new session will tell you)
+### A5. Publish on KDP (follow `research/kdp_publishing_plan_2026-11-07.md`)
+- [ ] Decisions asked in section 8 of that plan (country for tax, pen name for the adult book, which books first, AI-text disclosure, price)
+- [ ] Part A of the plan (account, identity, tax, bank), then Part B per book. KDP limit: 2 new titles per format per week.
+
+### A5b. After the first draft is ready (the new session will tell you)
 - [ ] Review the generated pages, the interior PDF and the cover (`books/001-cozy-winter-animals/`); reject any you don't like.
 - [ ] Upload book 1 to KDP (about 10-15 min; Claude prepares every field in `books/001-cozy-winter-animals/listing.md`). Check the file in KDP's online previewer.
 - [ ] Select **Yes** for AI-generated images in the KDP form. Be honest in every field.

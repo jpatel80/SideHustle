@@ -47,3 +47,8 @@ See TODO.md section A: check Wren Ashby on Amazon, register domains, claim handl
 
 ## Branch workflow (2026-11-07)
 - `main` was created from the full work so far (books 1-3, scripts, docs) and is the branch the owner reads. Owner must set it as GitHub's default branch (Claude cannot change repo settings). After the owner approves a finished task, merge the session branch into `main` and push it. See CLAUDE.md "Branch workflow".
+
+## KDP publishing research (2026-11-07)
+- Full plan: `research/kdp_publishing_plan_2026-11-07.md`. No KDP API/MCP; owner publishes by hand; limit of 2 new titles per format per week; first publish from a new account can take up to 6 days.
+- **Royalty is 50% up to $9.98 and 60% from $9.99** on Amazon.com; $2.84 print cost for up to 110 pages. Earlier "$1.95 at $7.99" was wrong (about $1.16). Prefer $9.99 or higher after checking competitors.
+- Disclose AI images and text. Expanded Distribution off. Up to 3 categories. Cover PDFs now embed fonts correctly (bug fixed 2026-11-07).
