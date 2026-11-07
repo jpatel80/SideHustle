@@ -9,7 +9,7 @@ Upload to KDP: `interior.pdf` (manuscript) and `cover.pdf` (cover). Listing text
 
 | file | bytes | sha256 |
 |---|---|---|
-| cover.pdf | 6423444 | b2ca593bf2282a6c... |
+| cover.pdf | 6423338 | 87f2d089b892f437... |
 | cover_preview.png | 5007710 | 3d010ff0abf958d0... |
 | interior.pdf | 16581770 | ae7f79ec83730c90... |
 | ledger.jsonl | 6855 | a61272efd660a121... |
