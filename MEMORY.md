@@ -45,7 +45,7 @@ Nothing is published. No sales data exists. The three niches were chosen before 
 - Cover: `make_cover.py` fun style (owner-approved family), RGB image at 300 DPI, no fonts in the PDF, blank barcode box, spine text only when the spine leaves 0.125 in for type (about 111+ pages).
 - KDP limits checked: 24-page minimum, gutter 0.375 in up to 150 pages, spine 0.002252 in per page (white), spine text needs 79+ pages, cover wants embedded fonts and 300 DPI, three new titles per day per account.
 - Generator: `--budget` is required and cumulative per book folder (ledger); prompts are logged. `archive_book.py --restore` rebuilds `pages/` from `final/` in a fresh container.
-- Environment: cloud container, reclaimed between sessions. `OPENROUTER_API_KEY` is an environment variable (never printed). `scripts/setup_env.sh` is the setup script to save on the environment. 109 tests: `python3 -m unittest discover -s tests` (about 6 minutes).
+- Environment: cloud container, reclaimed between sessions. `OPENROUTER_API_KEY` is an environment variable (never printed). `scripts/setup_env.sh` is the setup script to save on the environment. 109 tests: `python3 -m unittest discover -s tests` (about 5 minutes).
 - Repo size: `final/` folders hold PDFs and PNGs (about 125 MB for three books). Move to Git LFS or release assets before book 10.
 
 ## Open risks
