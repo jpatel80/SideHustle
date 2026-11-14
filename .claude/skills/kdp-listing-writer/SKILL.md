@@ -5,18 +5,16 @@ description: Use when writing or revising the KDP listing for a book in this rep
 
 # KDP listing writer
 
-Read CLAUDE.md first. Output goes to `books/NNN-slug/listing.md`. The owner pastes it into KDP; you never log in to KDP.
+Read CLAUDE.md first. The listing is **generated**: edit the listing fields in `books/NNN-slug/book.json`, then run `python3 scripts/book_factory.py kit books/NNN-slug` (or `finish`), which writes `listing.md` and `final/UPLOAD_KIT.md`. Never edit `listing.md` by hand. The owner pastes it into KDP; you never log in to KDP.
 
-## Fields to produce
-- **Title** and **subtitle**: plain, accurate, readable. No keyword stuffing, no famous names or brands, no claims you can't back ("best", "#1"). The subtitle states what is inside and for whom (for example "30 Bold and Easy Pictures for Kids Ages 4-8").
-- **Author**: pen name only (Wren Ashby). **Imprint** line for cover/title/copyright pages: Little Fox Paper Co.
-- **Description** (HTML allowed, up to 4000 characters per KDP **[verify]**): honest summary, what is inside (page count, single-sided pages, big simple pictures), who it suits, one line on use (markers/crayons, blank backs). No educational or learning-outcome promises, no health claims.
-- **7 keyword slots**: natural search phrases a buyer would type, each distinct; no repeats of the title; no competitor or brand names.
-- **Categories**: pick the closest children's / adult coloring categories in the KDP form (menu paths change; verify in the form).
-- **Age/grade range** for kids' books; **adult content**: No.
-- **Pricing note**: say what to check (KDP's minimum list price depends on page count and ink type; use KDP's royalty calculator); suggest a price band, not a fixed number.
-- **Disclosure answers**: AI-generated images **Yes** (be honest; describe as AI-generated illustrations with human selection and layout); copyright: owner holds publishing rights.
-- **Checklist** before upload: interior PDF validated, cover size correct, previewed in KDP's online previewer, listing text matches the actual content, nothing copyrighted or misleading.
+## Fields in book.json
+- **title / subtitle**: plain and accurate; the subtitle states the picture count and who it is for. The count must match the pages and the cover badge (the factory checks).
+- **author**: pen name only (Wren Ashby for kids; the adult pen name for adult books). **imprint**: Little Fox Paper Co.
+- **description** (HTML, at most 4000 characters): what is inside, who it suits, the black-and-white note, the AI sentence. No educational or health claims.
+- **keywords**: exactly 7, each 50 characters or fewer, taken from real search suggestions (`research/autocomplete/*.json`) and true of the book. No brands, no competitor or author names.
+- **categories**: up to three paths; mark them [verify] until the owner confirms them in the form.
+- **price_usd**: use `scripts/kdp_pricing.py`. Amazon.com pays 50% below $9.99 and 60% from $9.99.
+- **reading_age** for kids' books; **notes** for anything the owner must know.
 
 ## Rules
-Mark every unverified claim **[verify]**. If a field's current KDP rules are unclear, say so rather than guess.
+Mark every unverified claim **[verify]**. `book_factory.py check` must pass. If a KDP form field is unclear, say so in `notes` rather than guess.

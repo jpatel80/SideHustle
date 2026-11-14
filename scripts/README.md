@@ -1,3 +1,35 @@
+# Scripts
+
+Normal use is the **book factory**; the other scripts are its parts and can be run alone.
+
+```bash
+# 0. research (free): what do shoppers type, and can a new book compete?
+python3 scripts/research_niches.py harvest --seeds research/seeds.txt --expand -o research/autocomplete/$(date +%F).json
+python3 scripts/research_niches.py worksheet "bold and easy coloring book for adults"   # fill the CSV from Amazon's results
+python3 scripts/research_niches.py rank research/autocomplete/<date>.json -o research/niches_<date>.md
+
+# 1. a book: copy books/book.template.json to books/NNN-slug/book.json, write subjects.txt (50 page ideas)
+python3 scripts/book_factory.py check  books/NNN-slug             # free
+python3 scripts/book_factory.py pages  books/NNN-slug --generate  # paid, capped; then LOOK at books/NNN-slug/review/
+python3 scripts/book_factory.py finish books/NNN-slug --reviewed  # interior.pdf, cover.pdf, listing.md, final/
+python3 scripts/book_factory.py spend  books                      # total spend against the $25 cap
+
+# 2. money
+python3 scripts/kdp_pricing.py --pages 106 --target 300
+python3 scripts/sales_tracker.py                                   # reads tracking/kdp_reports/, writes tracking/REPORT.md
+```
+
+To redo a page: delete its file in `books/NNN-slug/pages/` and run `pages --generate` again. If the page idea
+changed, delete the old file too (the file name comes from the idea). In a new container `pages` restores the
+working folder from `final/` first (`archive_book.py --restore`).
+
+Changes on 2026-11-14: `generate` needs `--budget` and the cap counts earlier runs in the same folder;
+`build` renders art at 600 DPI with a 0.5 in gutter, a picture on the title page and a color test page on the
+last leaf (`--no-test-page`, `--title-art 0`, `--display-font none` switch these off); `qa` takes
+`--style kids|adult` and `--against <other books' page folders>`; the cover PDF contains no fonts.
+
+The sections below describe the individual scripts.
+
 # scripts/build_interior.py
 
 Turns a folder of generated images into a KDP-ready coloring-book interior.
@@ -20,9 +52,8 @@ python3 scripts/build_interior.py cover-dims --pages 52 --trim 8.5x11
 Name images so they sort in book order (`01.png`, `02.png`, ...). Default trim is 8.5x11, no bleed.
 Use `--bleed` only if art must run to the page edge.
 
-Constants marked VERIFY in the script (gutter table, spine thickness, minimum pages, barcode
-area) come from KDP help pages and secondary guides. Re-check them against KDP's current
-pages before publishing, and always review the file in KDP's online previewer.
+The KDP constants in the script (gutter table, spine thickness, minimum pages, barcode area) were checked
+against KDP help pages on 2026-11-06 and 2026-11-14. Always review the file in KDP's online previewer.
 
 Tests: `python3 -m unittest discover -s tests -v`
 
@@ -43,7 +74,7 @@ python3 scripts/generate_images.py bakeoff prompts/bakeoff_subjects.txt \
 
 # 2. a real book: preview the plan, then generate with a hard cap
 python3 scripts/generate_images.py generate books/<slug>/subjects.txt -o books/<slug>/pages \
-  --model <winner> --style kids --budget 4 --dry-run --hint-price
+  --model <winner> --style kids --dry-run --hint-price
 python3 scripts/generate_images.py generate books/<slug>/subjects.txt -o books/<slug>/pages \
   --model <winner> --style kids --budget 4
 ```
