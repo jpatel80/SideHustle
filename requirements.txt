@@ -4,3 +4,4 @@ reportlab>=4
 pypdf>=4      # validation + tests
 scipy>=1.11   # region labeling: colored cover art (make_cover.py) and page QA (build_interior.py)
 requests>=2.31  # OpenRouter Image API client (generate_images.py)
+openpyxl>=3.1  # optional: read KDP .xlsx sales reports (sales_tracker.py); .csv works without it

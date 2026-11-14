@@ -1,5 +1,7 @@
 # SideHustle: Low-Capital Plan (KDP Coloring Books first, Print-on-Demand Tees second)
 
+> **This file is history (plan of 2026-11-03 plus a dated decision log). The current state, rules and numbers are in [MEMORY.md](MEMORY.md); where the two differ, MEMORY.md wins.** Known corrections (2026-11-14): paperback royalty is 50% below $9.99 and 60% from $9.99, so every "60% at $7.99" figure below is wrong (real royalty at $7.99 is $1.16); KDP's cap is three new titles per day, not two per week; section 5's repository layout was never built as written (see `scripts/README.md`); the total budget is $25.
+
 Written 2026-11-03. Goal: a low-effort income stream toward monthly bills, started with as little cash as possible and validated before any real money or time goes in.
 
 **Evidence quality:** Most of the research below comes from SEO and vendor blogs, not Amazon, Etsy or Printify documentation. Anything marked **[verify]** needs checking on the official page before you rely on it. Figures labelled "my estimate" are my own arithmetic, not sourced.
@@ -209,7 +211,7 @@ Your Claude subscription is the main ongoing cost and is not counted above.
   - Avoid fox-only branding that imitates the Little Fox learning brand: no animated-story or English-learning/educational positioning, no songs/audio, no app-style content.
   - Do not file a trademark on the name until we have traction; revisit with an attorney before scaling merchandise (tees, class 25) or if any takedown or cease-and-desist arrives.
   - If a conflict ever appears, the fallback names are Moth & Marigold and Paperkite Studio. Keep books free of the brand name inside the artwork so a rename is cheap (author name is in the KDP Author field, copyright page and cover only).
-- **Do now (owner):** register both domains, claim handles (Instagram, Pinterest, TikTok, Etsy shop name), and use `Little Fox Paper Co` as the KDP Author name for every book. Choose it before the first publish; changing the author name later is reportedly restricted.
+- ~~**Do now (owner):** register both domains, claim handles, and use `Little Fox Paper Co` as the KDP Author name for every book.~~ **WITHDRAWN (corrected 2026-11-14):** never put the brand in the KDP Author field. The Author field holds a pen name (Wren Ashby for kids' books, a second pen name for adult books); the brand is the imprint only. Domains: do not buy any until a book sells (owner decision 2026-11-14).
 
 ### Update 2026-11-05: author-name rules and pen-name shortlist
 

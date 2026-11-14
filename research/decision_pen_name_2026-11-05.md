@@ -1,4 +1,4 @@
-# Decision 2026-11-05: pen name / brand = Little Fox Paper Co
+# Decision 2026-11-05: brand / imprint = Little Fox Paper Co (not the author name; see correction below)
 
 Chosen by the owner after being shown the USPTO findings (research/name_clearance_2026-11-05.md) and the risk.
 Domains littlefoxpaper.com and littlefoxpaper.co were reported available by the owner (not independently verified).
@@ -13,11 +13,11 @@ Domains littlefoxpaper.com and littlefoxpaper.co were reported available by the 
 - Avoid positioning that imitates the Little Fox learning brand: no educational/English-learning claims, no songs or audio, no app-style story content.
 - Do not file a trademark on the name until there is traction. Talk to an attorney before scaling merchandise (tees, class 25) or if any takedown or cease-and-desist arrives.
 - Fallback names if a conflict appears: Moth & Marigold, Paperkite Studio.
-- Keep the brand name out of the artwork so a rename is cheap. The name appears only in the KDP Author field, the copyright page and the cover.
+- Keep the brand name out of the artwork so a rename is cheap. The name appears only on the cover, the title page and the copyright page (never in the KDP Author field).
 
 ## Owner to-do
 - Register both domains; claim Instagram, Pinterest, TikTok and the Etsy shop name.
-- Use "Little Fox Paper Co" as the KDP Author name from the first publish. Changing the author name later is reportedly restricted.
+- ~~Use "Little Fox Paper Co" as the KDP Author name from the first publish.~~ **WITHDRAWN (corrected 2026-11-14):** the brand never goes in the KDP Author field. Author = pen name (Wren Ashby for kids, a second name for adult books, see `research/pen_names.md`); Little Fox Paper Co is the imprint on the cover, title page and copyright page only. Do not buy domains until a book sells (owner decision 2026-11-14).
 
 ## Not yet done
 - Dedicated exact-match USPTO search and a domain-registration lookup (the shell tool was failing when this was written).
