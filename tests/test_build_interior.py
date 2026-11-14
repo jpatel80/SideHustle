@@ -79,11 +79,11 @@ class BuildInteriorTests(unittest.TestCase):
             bi.gutter_for(829)
 
     def test_build_page_count_and_size_no_bleed(self):
-        self.make(12)  # 4 front + 24 = 28 pages
+        self.make(12)  # 4 front + 24 + test page leaf = 30 pages
         code, out, so, se = self.build()
         self.assertEqual(code, 0, se)
         r = PdfReader(str(out))
-        self.assertEqual(len(r.pages), 28)
+        self.assertEqual(len(r.pages), 30)
         self.assertEqual(len(r.pages) % 2, 0)
         for p in r.pages:
             self.assertAlmostEqual(float(p.mediabox.width), 8.5 * 72, places=1)
@@ -109,7 +109,7 @@ class BuildInteriorTests(unittest.TestCase):
         self.assertIn("Made with AI tools.", r.pages[1].extract_text())
 
     def test_too_few_pages_is_refused(self):
-        self.make(3)  # 4 + 6 = 10 pages
+        self.make(3)  # 4 + 6 + 2 = 12 pages
         code, out, so, se = self.build()
         self.assertEqual(code, 2)
         self.assertIn("at least 24", se)
@@ -119,7 +119,9 @@ class BuildInteriorTests(unittest.TestCase):
         self.make(3)
         code, out, so, se = self.build("--pad-to-min")
         self.assertEqual(code, 0, se)
-        self.assertEqual(len(PdfReader(str(out)).pages), 24)
+        r = PdfReader(str(out))
+        self.assertEqual(len(r.pages), 24)
+        self.assertIn("Color test page", r.pages[22].extract_text())  # still on the last leaf
 
     def test_art_is_pure_black_and_white(self):
         self.make(12)
@@ -193,6 +195,96 @@ class BuildInteriorTests(unittest.TestCase):
         self.assertIn("near-duplicate", joined("a_clean.png"))
         self.assertIn("near-duplicate", joined("e_clean_dup.png"))
         self.assertNotIn("b_shaded.png", " ".join(by_file.get("c_solid.png", [])))
+
+    def test_copyright_page_claims_only_arrangement_and_states_ai(self):
+        self.make(10)
+        out = self.dir / "c.pdf"
+        code, _, err = run(["build", str(self.imgs), "-o", str(out), "--title", "T", "--author", "A B",
+                            "--imprint", "Little Fox Paper Co", "--year", "2026"])
+        self.assertEqual(code, 0, err)
+        text = " ".join(PdfReader(str(out)).pages[1].extract_text().split())
+        self.assertIn("Selection, arrangement and design \u00a9 2026 Little Fox Paper Co.", text)
+        self.assertIn("generated with AI image tools", text)
+        self.assertNotIn("All rights reserved", text)
+        self.assertNotIn("with the help of", text)
+
+    def test_test_page_is_last_leaf_and_can_be_skipped(self):
+        self.make(12)
+        code, out, so, se = self.build()
+        r = PdfReader(str(out))
+        self.assertIn("Color test page", r.pages[28].extract_text())
+        self.assertEqual(r.pages[29].extract_text().strip(), "")
+        code, out, so, se = self.build("--no-test-page")
+        self.assertEqual(len(PdfReader(str(out)).pages), 28)
+
+    def test_title_page_shows_a_picture_and_keeps_coloring_book_together(self):
+        self.assertEqual(bi.split_title("Cozy Winter Animals Coloring Book"), ["Cozy Winter Animals", "Coloring Book"])
+        self.assertEqual(bi.split_title("Cozy Cottage Coloring Book for Adults"),
+                         ["Cozy Cottage", "Coloring Book", "for Adults"])
+        self.assertEqual(bi.split_title("Garden Friends"), ["Garden Friends"])
+        self.make(12)
+        code, out, so, se = self.build()
+        self.assertEqual(len(list(PdfReader(str(out)).pages[0].images)), 1)
+        code, out, so, se = self.build("--title-art", "0")
+        self.assertEqual(len(list(PdfReader(str(out)).pages[0].images)), 0)
+
+    def test_default_gutter_and_art_resolution(self):
+        self.make(12)
+        code, out, so, se = self.build()
+        self.assertIn('"gutter_in": 0.5', so)
+        self.assertIn('"art_dpi": 600', so)
+        page = PdfReader(str(out)).pages[4]
+        im = list(page.images)[0].image
+        self.assertGreater(im.width, 3600)  # about 7.6 in at 600 DPI
+        code, out, so, se = self.build("--gutter", "0.1")  # never below KDP's minimum
+        self.assertIn('"gutter_in": 0.375', so)
+
+    def test_page_limit_depends_on_trim(self):
+        self.assertEqual(bi.max_pages_for((8.5, 11.0)), 590)
+        self.assertEqual(bi.max_pages_for((6.0, 9.0)), 828)
+
+    def test_qa_real_size_pages_are_not_flagged_low_resolution(self):
+        flower(self.imgs / "a.png", 6, size=(1152, 1536))
+        code, so, se = run(["qa", str(self.imgs)])
+        self.assertIn("1 clean, 0 flagged", so)
+
+    def test_qa_fine_lines_are_not_gray_shading(self):
+        # many thin anti-aliased lines: lots of mid-gray edge pixels but no flat gray area
+        im = Image.new("L", (2304, 3072), 255)
+        d = ImageDraw.Draw(im)
+        for x in range(200, 2100, 24):
+            d.line([x, 300, x + 60, 2700], fill=0, width=5)
+        im.resize((1152, 1536), Image.LANCZOS).save(self.imgs / "fine.png")
+        r = bi.analyse_image(self.imgs / "fine.png", "adult")
+        self.assertFalse([f for f in r["flags"] if "gray" in f], r["flags"])
+
+    def test_qa_flags_crackly_detail_and_odd_line_weight(self):
+        import random
+        rnd = random.Random(1)
+        im = Image.new("L", (1152, 1536), 255)
+        d = ImageDraw.Draw(im)
+        for _ in range(900):  # hundreds of tiny closed rings = areas nobody can color
+            x, y = rnd.randrange(60, 1090), rnd.randrange(60, 1470)
+            d.ellipse([x, y, x + 9, y + 9], outline=0, width=2)
+        im.save(self.imgs / "noisy.png")
+        r = bi.analyse_image(self.imgs / "noisy.png", "kids")
+        self.assertTrue([f for f in r["flags"] if "crackly" in f], r)
+        for i in range(5):
+            flower(self.imgs / f"bold_{i}.png", 5 + i, size=(1152, 1536))
+        thin = Image.new("L", (1152, 1536), 255)
+        ImageDraw.Draw(thin).ellipse([200, 300, 950, 1200], outline=0, width=2)
+        thin.save(self.imgs / "thin.png")
+        res = {r["file"]: r for r in bi.run_qa(bi.list_images(self.imgs))}
+        self.assertTrue([f for f in res["thin.png"]["flags"] if "line weight" in f], res["thin.png"])
+
+    def test_qa_against_other_books_catches_repeats(self):
+        other = self.dir / "otherbook" / "final" / "pages"
+        other.mkdir(parents=True)
+        flower(other / "01.png", 6, size=(1152, 1536))
+        flower(self.imgs / "same.png", 6, size=(1152, 1536))
+        flower(self.imgs / "different.png", 11, size=(1152, 1536))
+        code, so, se = run(["qa", str(self.imgs), "--against", str(other)])
+        self.assertIn("another book's page: otherbook/01.png", so)
 
     def test_qa_strict_exit_code(self):
         flower(self.imgs / "a.png", 6, shade=True)

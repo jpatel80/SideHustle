@@ -20,6 +20,7 @@ publishing, and adjust the constants if Amazon has changed them.
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import re
 import shutil
@@ -28,20 +29,23 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageOps
+from PIL import Image, ImageFilter, ImageOps
 from reportlab.lib.utils import ImageReader, simpleSplit
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
-DPI = 300
+DPI = 300  # KDP minimum for images; covers are rendered at this resolution
+ART_DPI = 600  # interior line art is rendered at 600 DPI so thresholded edges stay smooth in print
 PT = 72.0
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp"}
 
 # Verified 2026-11-06 against KDP help "Set Trim Size, Bleed, and Margins" (GVBQ3CMEQW3W2VL6): minimum inside (gutter) margin by page count.
 GUTTER_TABLE = [(150, 0.375), (300, 0.5), (500, 0.625), (700, 0.75), (828, 0.875)]
 MIN_PAGES = 24  # Verified 2026-11-06 (KDP Paperback Submission Guidelines): smallest paperback page count.
-MAX_PAGES = 828  # Largest page count in the gutter table. Real limit depends on trim/ink/paper: 8.5x11 black ink on white paper is 24-590 (KDP, 2026-11-06).
+MAX_PAGES = 828  # Largest page count in the gutter table (the limit for small trims).
+MAX_PAGES_LARGE_TRIM = 590  # 8.5 x 11 in, black ink, white paper: 24-590 pages (KDP, 2026-11-06).
+DEFAULT_GUTTER = 0.5  # we use more than KDP's 0.375 in minimum so art near the binding is easier to color
 BLEED_W = 0.125  # extra width for a full-bleed PDF (outer edge only)
 BLEED_H = 0.25  # extra height for a full-bleed PDF (top + bottom)
 # Verified 2026-11-06 (KDP "Create a Paperback Cover", G201953020): spine thickness per page, inches.
@@ -65,10 +69,14 @@ BOLD_CANDIDATES = [
 
 # QA thresholds
 GRAY_LO, GRAY_HI = 48, 208  # pixel values counted as "gray" (neither ink nor paper)
-MAX_GRAY_RATIO = 0.12
+MAX_GRAY_RATIO = 0.01  # share of pixels inside FLAT gray areas (anti-aliased line edges are not counted)
+GRAY_FLAT_PX = 5  # a pixel is "flat gray" when its whole 5x5 neighbourhood is mid-gray
 MAX_INK_RATIO = 0.30
 MIN_INK_RATIO = 0.01
-MIN_SIDE_PX = 1200
+MIN_SIDE_PX = 1000  # openai/gpt-image-2 returns 1152 x 1536 px at 3:4; below ~1000 px lines get soft
+SPECK_IN = 0.045  # an enclosed white area smaller than this (inches across, at print size) cannot be colored
+MAX_SPECKS = {"kids": 25, "adult": 400}  # tiny enclosed areas allowed per page before it is flagged as "crackly"
+LINE_WEIGHT_SPREAD = 1.6  # flag pages whose line weight is this many times above/below the book median
 DUP_HAMMING = 6
 
 
@@ -87,6 +95,12 @@ def parse_trim(s: str) -> tuple[float, float]:
     if not m:
         raise argparse.ArgumentTypeError(f"trim must look like 8.5x11, got {s!r}")
     return float(m.group(1)), float(m.group(2))
+
+
+def max_pages_for(trim: tuple[float, float]) -> int:
+    """KDP page limit for black ink on white paper (large trims stop at 590 pages)."""
+    w, h = trim
+    return MAX_PAGES_LARGE_TRIM if (w > 6.12 or h > 9.0) else MAX_PAGES
 
 
 def gutter_for(pages: int) -> float:
@@ -154,17 +168,26 @@ def hamming(a: int, b: int) -> int:
 
 
 # ----------------------------------------------------------------------------- qa
-def analyse_image(path: Path) -> dict:
+def _probe(gray: Image.Image) -> Image.Image:
+    w, h = gray.size
+    if max(w, h) > 1536:  # speed: statistics are scale-stable enough
+        s = 1536 / max(w, h)
+        return gray.resize((max(1, round(w * s)), max(1, round(h * s))), Image.LANCZOS)
+    return gray
+
+
+def analyse_image(path: Path, style: str = "kids") -> dict:
     gray = load_gray(path)
     w, h = gray.size
-    probe = gray
-    if max(w, h) > 1024:  # speed: statistics are scale-stable enough
-        s = 1024 / max(w, h)
-        probe = gray.resize((max(1, round(w * s)), max(1, round(h * s))), Image.LANCZOS)
+    probe = _probe(gray)
     a = np.asarray(probe)
-    gray_ratio = float(((a > GRAY_LO) & (a < GRAY_HI)).mean())
+    # flat gray = shading or a gray fill. Anti-aliased edges of thin lines are mid-gray too, but never
+    # fill a whole neighbourhood, so they no longer trip this check on finely detailed (adult) pages.
+    mid = Image.fromarray((((a > GRAY_LO) & (a < GRAY_HI)) * 255).astype(np.uint8), "L")
+    gray_ratio = float((np.asarray(mid.filter(ImageFilter.MinFilter(GRAY_FLAT_PX))) > 0).mean())
     ink_ratio = float((a < 128).mean())
     ink = a < 128
+    line_px, specks = line_stats(ink, probe.width)
     border = max(2, int(0.01 * max(a.shape)))
     touches = bool(
         ink[:border, :].any() or ink[-border:, :].any() or ink[:, :border].any() or ink[:, -border:].any()
@@ -178,26 +201,68 @@ def analyse_image(path: Path) -> dict:
         flags.append(f"too much ink / solid fills ({ink_ratio:.0%} black)")
     if ink_ratio < MIN_INK_RATIO:
         flags.append(f"nearly empty page ({ink_ratio:.1%} black)")
-    if touches:
+    if touches and style == "kids":  # adult pages are full-page compositions; reaching the edge is normal there
         flags.append("artwork touches the image edge (may be cropped or feel cramped)")
+    if specks is not None and specks > MAX_SPECKS[style]:
+        flags.append(f"crackly detail ({specks} enclosed areas too small to color; limit {MAX_SPECKS[style]})")
     return {
         "file": path.name,
         "size_px": [w, h],
         "gray_ratio": round(gray_ratio, 4),
         "ink_ratio": round(ink_ratio, 4),
+        "line_px": line_px,
+        "specks": specks,
         "touches_edge": touches,
         "flags": flags,
         "_hash": dhash(probe),
     }
 
 
-def run_qa(images: list[Path]) -> list[dict]:
-    results = [analyse_image(p) for p in images]
+def line_stats(ink: np.ndarray, width_px: int, page_width_in: float = 7.5) -> tuple[float | None, int | None]:
+    """(typical line thickness in probe pixels, number of enclosed white areas too small to color).
+
+    Line thickness is twice the mean distance-to-paper along the ridge of the ink (its local maxima).
+    A "speck" is an enclosed white region smaller than SPECK_IN across when the image is printed
+    `page_width_in` wide: lots of them means texture that turned into noise. Needs scipy; returns
+    (None, None) without it."""
+    try:
+        from scipy import ndimage
+    except ImportError:
+        return None, None
+    if not ink.any():
+        return 0.0, 0
+    dist = ndimage.distance_transform_edt(ink)
+    ridge = ink & (dist >= ndimage.maximum_filter(dist, size=3) - 1e-6)
+    line_px = round(float(2 * dist[ridge].mean() - 1), 2) if ridge.any() else 0.0
+    regions, n = ndimage.label(~ink)
+    if n == 0:
+        return line_px, 0
+    sizes = np.bincount(regions.ravel(), minlength=n + 1)[1:]
+    speck_area = (SPECK_IN * width_px / page_width_in) ** 2
+    return line_px, int((sizes < speck_area).sum())
+
+
+def run_qa(images: list[Path], style: str = "kids", against: list[Path] | None = None) -> list[dict]:
+    results = [analyse_image(p, style) for p in images]
     for i in range(len(results)):
         for j in range(i + 1, len(results)):
             if hamming(results[i]["_hash"], results[j]["_hash"]) <= DUP_HAMMING:
                 for k, other in ((i, j), (j, i)):
                     results[k]["flags"].append(f"near-duplicate of {results[other]['file']}")
+    for other_path in against or []:  # pages of other books in the catalog: no picture may repeat
+        try:
+            oh = dhash(_probe(load_gray(other_path)))
+        except OSError:
+            continue
+        for r in results:
+            if hamming(r["_hash"], oh) <= DUP_HAMMING:
+                r["flags"].append(f"near-duplicate of another book's page: {other_path.parent.parent.parent.name}/{other_path.name}")
+    weights = [r["line_px"] for r in results if r["line_px"]]
+    if len(weights) >= 5:
+        med = float(np.median(weights))
+        for r in results:
+            if r["line_px"] and (r["line_px"] > med * LINE_WEIGHT_SPREAD or r["line_px"] < med / LINE_WEIGHT_SPREAD):
+                r["flags"].append(f"line weight {r['line_px']:.1f}px differs from the book's median {med:.1f}px")
     for r in results:
         r.pop("_hash")
     return results
@@ -208,7 +273,10 @@ def cmd_qa(args) -> int:
     if not images:
         print(f"No images found in {args.images}", file=sys.stderr)
         return 2
-    results = run_qa(images)
+    against = []
+    for folder in args.against or []:
+        against += list_images(Path(folder))
+    results = run_qa(images, args.style, against)
     bad = [r for r in results if r["flags"]]
     print(f"Checked {len(results)} images: {len(results) - len(bad)} clean, {len(bad)} flagged\n")
     for r in bad:
@@ -237,7 +305,7 @@ def find_font(user: str | None, candidates: list[str], label: str) -> str | None
     return None
 
 
-def register_fonts(font: str | None, bold: str | None) -> tuple[str, str]:
+def register_fonts(font: str | None, bold: str | None, display: str | None = "auto") -> tuple[str, str, str]:
     reg = find_font(font, FONT_CANDIDATES, "font")
     if not reg:
         sys.exit(
@@ -247,7 +315,15 @@ def register_fonts(font: str | None, bold: str | None) -> tuple[str, str]:
     bld = find_font(bold, BOLD_CANDIDATES, "bold font") or reg
     pdfmetrics.registerFont(TTFont("BodyFont", reg))
     pdfmetrics.registerFont(TTFont("BoldFont", bld))
-    return "BodyFont", "BoldFont"
+    # display font for headings on the title / name / test pages: Chewy (kids) unless told otherwise
+    if display == "auto":
+        display = str(DISPLAY_FONT) if DISPLAY_FONT.is_file() else None
+    if display in (None, "", "none"):
+        return "BodyFont", "BoldFont", "BoldFont"
+    if not Path(display).is_file():
+        sys.exit(f"--display-font file not found: {display}")
+    pdfmetrics.registerFont(TTFont("DisplayFont", display))
+    return "BodyFont", "BoldFont", "DisplayFont"
 
 
 def page_geometry(idx: int, trim_w: float, trim_h: float, bleed: bool, gutter: float, outer: float, vmargin: float):
@@ -277,35 +353,102 @@ def draw_centered_text(c, text, font, size, y, page_w, max_w):
     return y
 
 
-def draw_text_page(c, kind, a, fonts, page_w, page_h, safe):
-    body, bold = fonts
+DISPLAY_FONT = Path(__file__).resolve().parent.parent / "assets" / "fonts" / "Chewy-Regular.ttf"  # Apache 2.0
+AI_NOTE = "The illustrations in this book were generated with AI image tools and were selected and arranged by the publisher."
+
+
+def copyright_lines(a) -> list[str]:
+    """Copyright page text. AI-generated pictures may not be protected by copyright, so the notice
+    claims only what a person did (selection, arrangement, design) and states the AI use plainly."""
+    owner = a.imprint or a.author
+    lines = [
+        a.title + (f": {a.subtitle}" if a.subtitle else ""),
+        f"Selection, arrangement and design \u00a9 {a.year} {owner}.",
+    ]
+    if a.ai_note:
+        lines.append(AI_NOTE)
+    lines.append(
+        "You are welcome to copy the pages for your own personal coloring. Please do not resell or "
+        "redistribute this book or its pages."
+    )
+    if a.imprint:
+        lines.append(f"Published by {a.imprint}")
+    if a.note:
+        lines.append(a.note)
+    return lines
+
+
+def threshold_art(gray: Image.Image, box_w_pt: float, box_h_pt: float, setting: str, dpi: int, crop: bool = True):
+    """Fit a grayscale page into a box (points) at `dpi` and convert it to pure black and white.
+    Returns (image, threshold used)."""
+    if crop:
+        gray = autocrop(gray)
+    scale = min(box_w_pt / PT * dpi / gray.width, box_h_pt / PT * dpi / gray.height)
+    g = gray.resize((max(1, round(gray.width * scale)), max(1, round(gray.height * scale))), Image.LANCZOS)
+    arr = np.asarray(g)
+    thr = pick_threshold(arr, setting)
+    return Image.fromarray(np.where(arr >= thr, 255, 0).astype(np.uint8), "L"), thr
+
+
+def place_image(c, bw: Image.Image, dpi: int, left: float, bottom: float, right: float, top: float) -> None:
+    w_pt, h_pt = bw.width / dpi * PT, bw.height / dpi * PT
+    c.drawImage(ImageReader(bw), left + ((right - left) - w_pt) / 2, bottom + ((top - bottom) - h_pt) / 2,
+                width=w_pt, height=h_pt)
+
+
+def split_title(title: str) -> list[str]:
+    m = re.search(r"\bcoloring book\b", title, flags=re.I)
+    if not m or (m.start() == 0 and m.end() == len(title)):
+        return [title]
+    return [t for t in (title[:m.start()].strip(), title[m.start():m.end()], title[m.end():].strip()) if t]
+
+
+def draw_text_page(c, kind, a, fonts, page_w, page_h, safe, title_art: Image.Image | None = None):
+    body, bold = fonts[0], fonts[1]
+    display = fonts[2] if len(fonts) > 2 else bold
     left, bottom, right, top = safe
     cx_w = right - left
     c.setFillGray(0)
+    c.setStrokeGray(0)
     if kind == "title":
-        y = draw_centered_text(c, a.title, bold, 40, page_h * 0.62, page_w, cx_w)
+        y = top - 70
+        for part in split_title(a.title):  # "Coloring Book" stays together on its own line
+            y = draw_centered_text(c, part, display, 46, y, page_w, cx_w)
         if a.subtitle:
-            y = draw_centered_text(c, a.subtitle, body, 20, y - 10, page_w, cx_w)
-        draw_centered_text(c, f"by {a.author}", body, 18, page_h * 0.18, page_w, cx_w)
+            y = draw_centered_text(c, a.subtitle, body, 19, y - 6, page_w, cx_w)
+        foot = bottom + 95
+        if title_art is not None:  # one picture from the book, so the first page is not bare
+            place_image(c, title_art, a.dpi, left + cx_w * 0.14, foot + 20, right - cx_w * 0.14, y - 10)
+        draw_centered_text(c, f"by {a.author}", body, 18, foot - 10, page_w, cx_w)
         if a.imprint:
-            draw_centered_text(c, a.imprint, body, 14, page_h * 0.12, page_w, cx_w)
+            draw_centered_text(c, a.imprint, body, 13, foot - 40, page_w, cx_w)
     elif kind == "copyright":
-        lines = [
-            f"Copyright \u00a9 {a.year} {a.author}. All rights reserved.",
-            "No part of this book may be reproduced in any form without written permission "
-            "from the author, except for personal use of the pages for coloring.",
-        ]
-        if a.imprint:
-            lines.append(a.imprint)
-        if a.note:
-            lines.append(a.note)
-        y = top - 40
-        for t in lines:
-            y = draw_centered_text(c, t, body, 10, y, page_w, cx_w) - 8
+        y = bottom + 190  # bottom of the page, where copyright notices usually sit
+        for t in copyright_lines(a):
+            y = draw_centered_text(c, t, body, 10, y, page_w, cx_w * 0.86) - 8
     elif kind == "belongs":
-        draw_centered_text(c, "This book belongs to", bold, 28, page_h * 0.58, page_w, cx_w)
+        c.setLineWidth(3)
+        c.roundRect(left + 18, bottom + 18, cx_w - 36, (top - bottom) - 36, 28)
         c.setLineWidth(1.2)
-        c.line(left + cx_w * 0.15, page_h * 0.50, right - cx_w * 0.15, page_h * 0.50)
+        c.roundRect(left + 30, bottom + 30, cx_w - 60, (top - bottom) - 60, 20)
+        draw_centered_text(c, "This book belongs to", display, 40, page_h * 0.62, page_w, cx_w - 90)
+        c.setLineWidth(2)
+        c.line(left + cx_w * 0.18, page_h * 0.47, right - cx_w * 0.18, page_h * 0.47)
+    elif kind == "test":
+        y = draw_centered_text(c, "Color test page", display, 36, top - 60, page_w, cx_w)
+        y = draw_centered_text(c, "Try your crayons, pencils and markers here first.", body, 14, y - 4, page_w, cx_w)
+        cols, rows = 4, 5
+        gap = 16.0
+        cell = min((cx_w - (cols - 1) * gap) / cols, (y - 30 - bottom - (rows - 1) * gap) / rows)
+        x0 = left + (cx_w - (cols * cell + (cols - 1) * gap)) / 2
+        c.setLineWidth(2.5)
+        for r in range(rows):
+            for k in range(cols):
+                x, yy = x0 + k * (cell + gap), y - 30 - (r + 1) * cell - r * gap
+                if (r + k) % 2:
+                    c.circle(x + cell / 2, yy + cell / 2, cell / 2)
+                else:
+                    c.roundRect(x, yy, cell, cell, cell * 0.18)
 
 
 def build_plan(n_art: int, a) -> list[tuple[str, int | None]]:
@@ -316,6 +459,10 @@ def build_plan(n_art: int, a) -> list[tuple[str, int | None]]:
         plan.append(("art", i))
         if a.blank_backs:
             plan.append(("blank", None))
+    if a.test_page:  # last leaf, so marker tests cannot bleed onto a picture
+        if len(plan) % 2:
+            plan.append(("blank", None))
+        plan += [("test", None), ("blank", None)]
     return plan
 
 
@@ -330,8 +477,9 @@ def cmd_build(args) -> int:
         plan.append(("blank", None))
     if len(plan) < MIN_PAGES:
         if args.pad_to_min:
+            at = len(plan) - 2 if args.test_page else len(plan)  # keep the test page on the last leaf
             while len(plan) < MIN_PAGES:
-                plan.append(("blank", None))
+                plan.insert(at, ("blank", None))
         else:
             need = MIN_PAGES - len(plan)
             per_image = 2 if args.blank_backs else 1
@@ -341,13 +489,15 @@ def cmd_build(args) -> int:
                 file=sys.stderr,
             )
             return 2
-    if len(plan) > MAX_PAGES:
-        print(f"{len(plan)} pages exceeds the {MAX_PAGES}-page limit.", file=sys.stderr)
+    limit = max_pages_for(args.trim)
+    if len(plan) > limit:
+        print(f"{len(plan)} pages exceeds KDP's {limit}-page limit for this trim size.", file=sys.stderr)
         return 2
 
     n_pages = len(plan)
     gutter = max(gutter_for(n_pages), args.gutter or 0)
-    fonts = register_fonts(args.font, args.bold_font)
+    fonts = register_fonts(args.font, args.bold_font, args.display_font)
+    dpi = args.dpi
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
 
@@ -364,23 +514,17 @@ def cmd_build(args) -> int:
         pw, ph, safe = page_geometry(idx, trim_w, trim_h, args.bleed, gutter, args.outer, args.vmargin)
         left, bottom, right, top = safe
         if kind == "art":
-            g = load_gray(images[payload])
-            if args.autocrop:
-                g = autocrop(g)
-            box_w_px = (right - left) / PT * DPI
-            box_h_px = (top - bottom) / PT * DPI
-            scale = min(box_w_px / g.width, box_h_px / g.height)
-            g = g.resize((max(1, round(g.width * scale)), max(1, round(g.height * scale))), Image.LANCZOS)
-            arr = np.asarray(g)
-            thr = pick_threshold(arr, args.threshold)
+            bw, thr = threshold_art(load_gray(images[payload]), right - left, top - bottom, args.threshold, dpi,
+                                    crop=args.autocrop)
             thresholds.append(thr)
-            bw = Image.fromarray(np.where(arr >= thr, 255, 0).astype(np.uint8), "L")
-            w_pt, h_pt = bw.width / DPI * PT, bw.height / DPI * PT
-            x = left + ((right - left) - w_pt) / 2
-            y = bottom + ((top - bottom) - h_pt) / 2
-            c.drawImage(ImageReader(bw), x, y, width=w_pt, height=h_pt)
-        elif kind in ("title", "copyright", "belongs"):
-            draw_text_page(c, kind, args, fonts, pw, ph, safe)
+            place_image(c, bw, dpi, left, bottom, right, top)
+        elif kind in ("title", "copyright", "belongs", "test"):
+            title_art = None
+            if kind == "title" and args.title_art:
+                src = images[min(max(args.title_art, 1), len(images)) - 1]
+                title_art, _ = threshold_art(load_gray(src), (right - left) * 0.72, (top - bottom) * 0.52,
+                                             args.threshold, dpi)
+            draw_text_page(c, kind, args, fonts, pw, ph, safe, title_art)
         c.showPage()
     c.save()
 
@@ -389,6 +533,7 @@ def cmd_build(args) -> int:
         {
             "art_pages": len(images),
             "gutter_in": gutter,
+            "art_dpi": dpi,
             "bleed": args.bleed,
             "median_threshold": int(np.median(thresholds)) if thresholds else None,
         }
@@ -474,6 +619,9 @@ def make_parser() -> argparse.ArgumentParser:
     q.add_argument("images", type=Path)
     q.add_argument("--json", help="write full results to this file")
     q.add_argument("--strict", action="store_true", help="exit 1 if anything is flagged")
+    q.add_argument("--style", choices=sorted(MAX_SPECKS), default="kids",
+                   help="kids: bold simple pages; adult: fine detail is expected (higher tiny-area limit)")
+    q.add_argument("--against", nargs="*", metavar="DIR", help="page folders of other books, to catch repeated pictures")
     q.set_defaults(func=cmd_qa)
 
     b = sub.add_parser("build", help="assemble the interior PDF")
@@ -482,14 +630,24 @@ def make_parser() -> argparse.ArgumentParser:
     b.add_argument("--title", required=True)
     b.add_argument("--subtitle", default="")
     b.add_argument("--author", required=True, help="the pen name shown on the book")
-    b.add_argument("--year", default="2026")
+    b.add_argument("--year", default=str(datetime.date.today().year))
     b.add_argument("--note", default="", help="extra line on the copyright page")
+    b.add_argument("--no-ai-note", dest="ai_note", action="store_false",
+                   help="omit the 'generated with AI image tools' line (only for books with no AI-generated art)")
+    b.add_argument("--no-test-page", dest="test_page", action="store_false",
+                   help="skip the color test page on the last leaf")
+    b.add_argument("--title-art", type=int, default=1, metavar="N",
+                   help="picture number shown small on the title page (0 = none, default 1)")
+    b.add_argument("--display-font", default="auto",
+                   help="TrueType font for headings; 'auto' = Chewy from assets/fonts, 'none' = the bold font")
+    b.add_argument("--dpi", type=int, default=ART_DPI, help=f"resolution of the line art in the PDF (default {ART_DPI})")
     b.add_argument("--imprint", default="", help="imprint / brand line on the title and copyright pages")
     b.add_argument("--trim", type=parse_trim, default=(8.5, 11.0), help="trim size WxH inches (default 8.5x11)")
     b.add_argument("--bleed", action="store_true", help="make a full-bleed PDF (art stays inside margins)")
     b.add_argument("--outer", type=float, default=0.375, help="outer margin, inches (KDP min 0.25)")
     b.add_argument("--vmargin", type=float, default=0.375, help="top/bottom margin, inches")
-    b.add_argument("--gutter", type=float, default=0, help="force a larger gutter than KDP's minimum")
+    b.add_argument("--gutter", type=float, default=DEFAULT_GUTTER,
+                   help=f"inside margin, inches (default {DEFAULT_GUTTER}; never below KDP's minimum for the page count)")
     b.add_argument("--threshold", default="auto", help="'auto' or 0-255 black/white cutoff")
     b.add_argument("--no-autocrop", dest="autocrop", action="store_false")
     b.add_argument("--no-blank-backs", dest="blank_backs", action="store_false",
