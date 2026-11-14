@@ -606,8 +606,17 @@ def compose(a, g: dict) -> Image.Image:
 
 
 def save_pdf(img: Image.Image, path: Path, g: dict) -> None:
+    """One flattened RGB image on one page. All text is already part of the image, so the PDF must not
+    reference any font: reportlab otherwise declares an un-embedded Helvetica on every page, and KDP
+    asks for all fonts to be embedded. Registering an embedded TrueType as the initial font avoids that."""
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+
     w_pt, h_pt = g["total_w"] * 72.0, g["total_h"] * 72.0
-    c = canvas.Canvas(str(path), pagesize=(w_pt, h_pt), pageCompression=1)
+    font = str(FUN_FONT) if FUN_FONT.is_file() else find_font(None)
+    pdfmetrics.registerFont(TTFont("CoverFont", font))
+    c = canvas.Canvas(str(path), pagesize=(w_pt, h_pt), pageCompression=1, initialFontName="CoverFont")
+    c.setTitle("Cover")
     c.drawImage(ImageReader(img), 0, 0, width=w_pt, height=h_pt)
     c.showPage()
     c.save()

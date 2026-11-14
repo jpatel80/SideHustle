@@ -88,6 +88,16 @@ class ArchiveTests(unittest.TestCase):
         ab.archive(book)
         self.assertFalse((book / "final" / "stale.txt").exists())
 
+    def test_restore_recreates_working_pages_and_ledger(self):
+        import shutil
+        book = make_book(self.root)
+        ab.archive(book)
+        shutil.rmtree(book / "pages")
+        info = ab.restore(book)
+        self.assertEqual(info["copied"], len(list((book / "final" / "pages").iterdir())))
+        self.assertTrue((book / "pages" / "ledger.jsonl").is_file())
+        self.assertEqual(ab.restore(book)["copied"], 0)  # second run keeps what is there
+
     def test_missing_inputs_is_an_error(self):
         book = make_book(self.root)
         (book / "cover.pdf").unlink()

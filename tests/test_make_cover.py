@@ -84,6 +84,19 @@ class CoverTests(unittest.TestCase):
         self.assertAlmostEqual(float(r.pages[0].mediabox.width) / 72, g["total_w"], places=2)
         self.assertAlmostEqual(float(r.pages[0].mediabox.height) / 72, g["total_h"], places=2)
 
+    def test_pdf_declares_no_unembedded_font(self):
+        # KDP wants every font embedded; reportlab's default page font (Helvetica) is not
+        out = self.build(64)
+        r = PdfReader(str(out))
+        fonts = (r.pages[0].get("/Resources") or {}).get("/Font") or {}
+        for ref in fonts.values():
+            f = ref.get_object()
+            self.assertNotIn("Helvetica", str(f.get("/BaseFont")))
+            self.assertIn("/FontDescriptor", f)
+            desc = f["/FontDescriptor"].get_object()
+            self.assertTrue(any(k in desc for k in ("/FontFile", "/FontFile2", "/FontFile3")))
+        self.assertNotIn(b"Helvetica", out.read_bytes())
+
     def test_png_pixel_size_is_300dpi(self):
         out = self.build(64)
         im = Image.open(out.with_suffix(".png"))

@@ -1,5 +1,6 @@
 pillow>=10
 numpy>=1.26
 reportlab>=4
-pypdf>=4   # validation + tests
-scipy>=1.11  # region labeling for the colored cover art (make_cover.py)
+pypdf>=4      # validation + tests
+scipy>=1.11   # region labeling: colored cover art (make_cover.py) and page QA (build_interior.py)
+requests>=2.31  # OpenRouter Image API client (generate_images.py)

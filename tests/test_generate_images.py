@@ -36,6 +36,7 @@ class FakeOpenRouter(BaseHTTPRequestHandler):
     fail_first = 0          # number of initial POSTs that return 502
     bad_subject = None      # prompt substring that gets a 400
     cost = 0.03
+    report_cost = True      # False: the response has no usage.cost
     seen = []
     lock = threading.Lock()
 
@@ -71,8 +72,10 @@ class FakeOpenRouter(BaseHTTPRequestHandler):
             return self._send(404, {"error": "nope"})
         if FakeOpenRouter.bad_subject and FakeOpenRouter.bad_subject in payload["prompt"]:
             return self._send(400, {"error": {"message": f"rejected for key {TEST_KEY}"}})
-        self._send(200, {"created": 1, "data": [{"b64_json": png_b64(), "media_type": "image/png"}],
-                         "usage": {"cost": FakeOpenRouter.cost}})
+        body = {"created": 1, "data": [{"b64_json": png_b64(), "media_type": "image/png"}]}
+        if FakeOpenRouter.report_cost:
+            body["usage"] = {"cost": FakeOpenRouter.cost}
+        self._send(200, body)
 
 
 class GenerateImagesTests(unittest.TestCase):
@@ -90,6 +93,7 @@ class GenerateImagesTests(unittest.TestCase):
         FakeOpenRouter.fail_first = 0
         FakeOpenRouter.bad_subject = None
         FakeOpenRouter.cost = 0.03
+        FakeOpenRouter.report_cost = True
         FakeOpenRouter.seen = []
         self._tmp = tempfile.TemporaryDirectory()
         self.dir = Path(self._tmp.name)
@@ -117,7 +121,7 @@ class GenerateImagesTests(unittest.TestCase):
 
     def gen(self, *extra):
         return self.run_cli(["generate", str(self.subjects), "-o", str(self.out), "--model", "fake/model",
-                             "--workers", "1", *extra])
+                             "--workers", "1", *(extra if "--budget" in extra else (*extra, "--budget", "5"))])
 
     def test_subjects_skip_comments_and_blanks(self):
         self.assertEqual(gi.read_subjects(self.subjects), ["A happy fox", "A sleepy owl", "A smiling turtle", "A brave lion"])
@@ -169,6 +173,38 @@ class GenerateImagesTests(unittest.TestCase):
         self.assertIn("not run (budget)", so)
         spent = sum(json.loads(l)["cost_usd"] for l in (self.out / "ledger.jsonl").read_text().splitlines())
         self.assertLessEqual(spent, 0.07)
+
+    def test_budget_is_required_for_paid_runs(self):
+        code, so, se = self.run_cli(["generate", str(self.subjects), "-o", str(self.out), "--model", "fake/model"])
+        self.assertIn("--budget is required", str(code))
+        self.assertEqual(FakeOpenRouter.seen, [])
+
+    def test_budget_is_cumulative_across_runs(self):
+        # 0.07 cap: the first run makes two images (0.06); deleting one and re-running must not buy another
+        self.gen("--budget", "0.07")
+        first = sorted(self.out.glob("*.png"))
+        self.assertEqual(len(first), 2)
+        first[0].unlink()
+        code, so, se = self.gen("--budget", "0.07")
+        self.assertEqual(len(FakeOpenRouter.seen), 2)
+        self.assertIn("earlier runs", so)
+        self.gen("--budget", "0.10")  # raising the cap allows exactly one more
+        self.assertEqual(len(FakeOpenRouter.seen), 3)
+        self.assertAlmostEqual(gi.ledger_spend(self.out / "ledger.jsonl"), 0.09)
+
+    def test_missing_cost_counts_the_reservation(self):
+        FakeOpenRouter.report_cost = False
+        code, so, se = self.gen("--budget", "0.07")  # price hint 0.03: two fit, the third does not
+        self.assertEqual(len(list(self.out.glob("*.png"))), 2)
+        rows = [json.loads(l) for l in (self.out / "ledger.jsonl").read_text().splitlines()]
+        self.assertTrue(all(r["cost_usd"] is None and r["cost_assumed_usd"] == 0.03 for r in rows))
+        self.assertAlmostEqual(gi.ledger_spend(self.out / "ledger.jsonl"), 0.06)
+
+    def test_ledger_records_the_prompt(self):
+        self.gen("--max-images", "1")
+        row = json.loads((self.out / "ledger.jsonl").read_text().splitlines()[0])
+        self.assertIn("A happy fox", row["prompt"])
+        self.assertNotIn(TEST_KEY, json.dumps(row))
 
     def test_one_rejected_prompt_does_not_stop_the_run_or_leak_key(self):
         FakeOpenRouter.bad_subject = "sleepy owl"

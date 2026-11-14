@@ -66,7 +66,29 @@ def ledger_total(*paths: Path) -> tuple[int, float]:
     return n, total
 
 
-def archive(book: Path, force: bool = False) -> dict:
+def restore(book: Path) -> dict:
+    """Recreate the working folder books/NNN-slug/pages/ (page images + ledger) from final/.
+
+    Cloud containers are reclaimed, and pages/ is gitignored scratch, so a new session only has final/.
+    Run this before rerolling pages or rebuilding the interior and cover. Existing files are kept."""
+    book = Path(book)
+    src = book / "final" / "pages"
+    if not src.is_dir():
+        raise SystemExit(f"cannot restore {book}: {src} does not exist")
+    dst = book / "pages"
+    dst.mkdir(exist_ok=True)
+    copied = 0
+    for p in sorted(src.iterdir()):
+        if p.suffix.lower() in PAGE_EXTS and not (dst / p.name).exists():
+            shutil.copy2(p, dst / p.name)
+            copied += 1
+    ledger = book / "final" / "ledger.jsonl"
+    if ledger.is_file() and not (dst / "ledger.jsonl").exists():
+        shutil.copy2(ledger, dst / "ledger.jsonl")  # keeps the per-book spending cap cumulative
+    return {"pages_dir": str(dst), "copied": copied, "ledger": (dst / "ledger.jsonl").is_file()}
+
+
+def archive(book: Path) -> dict:
     book = Path(book)
     pages_dir = book / "pages"
     interior, cover = book / "interior.pdf", book / "cover.pdf"
@@ -74,7 +96,7 @@ def archive(book: Path, force: bool = False) -> dict:
     if missing:
         raise SystemExit(f"cannot archive {book}: missing {', '.join(missing)}")
     final = book / "final"
-    if final.exists() and not force:
+    if final.exists():
         shutil.rmtree(final)  # final/ is generated output: always rebuilt from the working files
     (final / "pages").mkdir(parents=True, exist_ok=True)
 
@@ -122,7 +144,12 @@ def archive(book: Path, force: bool = False) -> dict:
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("book", help="books/NNN-slug folder with pages/, interior.pdf and cover.pdf")
+    p.add_argument("--restore", action="store_true",
+                   help="do the reverse: recreate pages/ (images + ledger) from final/ in a fresh container")
     a = p.parse_args(argv)
+    if a.restore:
+        print(json.dumps(restore(Path(a.book)), indent=2))
+        return 0
     info = archive(Path(a.book))
     print(json.dumps(info, indent=2))
     print(f"\nNext: git add {info['final']} && git commit, then push the branch.")

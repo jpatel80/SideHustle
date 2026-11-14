@@ -182,10 +182,27 @@ def per_image_floor(pricing: list[dict]) -> float | None:
 
 
 # ----------------------------------------------------------------------------- generate
+def ledger_spend(path: Path) -> float:
+    """Money already recorded in a ledger file (real cost, or the assumed cost when the API gave none)."""
+    total = 0.0
+    if path.is_file():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            try:
+                row = json.loads(line)
+            except ValueError:
+                continue
+            cost = row.get("cost_usd")
+            total += float(cost if cost is not None else row.get("cost_assumed_usd") or 0)
+    return total
+
+
 class Budget:
-    def __init__(self, budget: float | None, assumed: float, hint: float | None):
+    """Spending cap for one output folder. `already` is what earlier runs spent there (from the ledger),
+    so the cap is cumulative per book and re-running a command cannot exceed it."""
+
+    def __init__(self, budget: float | None, assumed: float, hint: float | None, already: float = 0.0):
         self.budget = budget
-        self.spent = 0.0
+        self.spent = already
         self.inflight = 0
         self.reserve = hint or assumed
         self.lock = threading.Lock()
@@ -203,6 +220,12 @@ class Budget:
             if cost is not None:
                 self.spent += cost
                 self.reserve = max(self.reserve, cost)
+
+    def charge_unknown(self) -> float:
+        """A paid response without a cost figure: count the reservation so the cap still holds."""
+        with self.lock:
+            self.spent += self.reserve
+            return self.reserve
 
 
 def run_generation(model, subjects, out_dir: Path, *, style, style_file, extra, aspect, quality,
@@ -229,7 +252,9 @@ def run_generation(model, subjects, out_dir: Path, *, style, style_file, extra, 
             print(f"  e.g. {stem}: {build_prompt(subj, style, style_file, extra)[:110]}...")
         return summary
 
-    bud = Budget(budget, assumed_cost, hint)
+    already = ledger_spend(ledger_path)
+    summary["spent_before_usd"] = round(already, 5)
+    bud = Budget(budget, assumed_cost, hint, already)
     lock = threading.Lock()
 
     def work(job):
@@ -240,7 +265,8 @@ def run_generation(model, subjects, out_dir: Path, *, style, style_file, extra, 
             return
         cost = None
         try:
-            payload = {"model": model, "prompt": build_prompt(subj, style, style_file, extra), "n": 1}
+            prompt = build_prompt(subj, style, style_file, extra)
+            payload = {"model": model, "prompt": prompt, "n": 1}
             if aspect:
                 payload["aspect_ratio"] = aspect
             if quality:
@@ -251,12 +277,15 @@ def run_generation(model, subjects, out_dir: Path, *, style, style_file, extra, 
             data, media_type, cost = parse_result(resp)
             path = out_dir / f"{stem}{ext_for(media_type, data)}"
             path.write_bytes(data)
+            row = {"ts": int(time.time()), "model": model, "file": path.name, "cost_usd": cost,
+                   "aspect_ratio": aspect, "quality": quality, "resolution": resolution, "prompt": prompt}
+            if cost is None:
+                row["cost_assumed_usd"] = bud.charge_unknown()
             with lock:
                 summary["done"] += 1
                 summary["files"].append(path.name)
                 with ledger_path.open("a", encoding="utf-8") as f:
-                    f.write(json.dumps({"ts": int(time.time()), "model": model, "file": path.name,
-                                        "cost_usd": cost, "aspect_ratio": aspect, "quality": quality}) + "\n")
+                    f.write(json.dumps(row) + "\n")
         except GenError as e:
             with lock:
                 summary["failed"] += 1
@@ -266,13 +295,14 @@ def run_generation(model, subjects, out_dir: Path, *, style, style_file, extra, 
 
     with ThreadPoolExecutor(max_workers=max(1, workers)) as ex:
         list(ex.map(work, jobs))
-    summary["spent_usd"] = round(bud.spent, 5)
+    summary["spent_usd"] = round(bud.spent - already, 5)
     return summary
 
 
 def print_summary(s: dict):
     print(f"{s['model']}: {s['done']} generated, {s['failed']} failed, "
-          f"{s['skipped_for_budget']} not run (budget), spent ${s['spent_usd']:.3f}")
+          f"{s['skipped_for_budget']} not run (budget), spent ${s['spent_usd']:.3f}"
+          + (f" (plus ${s['spent_before_usd']:.3f} in earlier runs of this folder)" if s.get("spent_before_usd") else ""))
     for e in s["errors"][:5]:
         print(f"  ! {e}")
     if s["skipped_for_budget"]:
@@ -387,6 +417,9 @@ def cmd_generate(args) -> int:
     subjects = read_subjects(args.subjects)
     if not subjects:
         sys.exit("subjects file is empty")
+    if args.budget is None and not args.dry_run:
+        sys.exit("--budget is required for paid runs (project rule: never spend without a cap). "
+                 "The cap counts everything already in this folder's ledger.jsonl.")
     key = None if args.dry_run else get_key()
     base = base_url()
     sess = requests.Session()
@@ -429,7 +462,8 @@ def make_parser():
     g.add_argument("--resolution")
     g.add_argument("--variants", type=int, default=1, help="images per subject, to pick the best")
     g.add_argument("--workers", type=int, default=3)
-    g.add_argument("--budget", type=float, help="stop before spending more than this many USD")
+    g.add_argument("--budget", type=float,
+                   help="required unless --dry-run: total USD cap for this output folder, including earlier runs (ledger.jsonl)")
     g.add_argument("--assumed-cost", type=float, default=DEFAULT_ASSUMED_COST,
                    help="per-image reservation until the real cost is known")
     g.add_argument("--max-images", type=int)
