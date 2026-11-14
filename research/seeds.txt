@@ -1,0 +1,31 @@
+# Seed phrases for scripts/research_niches.py harvest. One per line. Keep them generic (no brands).
+coloring book
+coloring book for
+coloring book for adults
+coloring book for kids
+coloring book for toddlers
+coloring books for kids ages
+coloring books for adults
+bold and easy coloring book
+cozy coloring book
+cute coloring book
+simple coloring book
+large print coloring book
+animal coloring book
+spring coloring book
+easter coloring book
+summer coloring book
+halloween coloring book
+christmas coloring book
+winter coloring book
+valentines coloring book
+ocean coloring book
+farm coloring book
+dinosaur coloring book
+flower coloring book
+cottage coloring book
+toddler coloring book
+my first coloring book
+big coloring book
+jumbo coloring book
+senior coloring book

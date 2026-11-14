@@ -1,0 +1,94 @@
+# Terms that disqualify a keyword, title or page idea. One per line, lower case, matched as whole words/phrases.
+# 1. Brands, characters, franchises, celebrities (never use; trademark and KDP policy risk)
+disney
+pixar
+marvel
+pokemon
+bluey
+paw patrol
+peppa
+cocomelon
+minecraft
+roblox
+fortnite
+barbie
+hello kitty
+sanrio
+kuromi
+stitch
+frozen
+elsa
+mickey
+spiderman
+spider-man
+batman
+superman
+star wars
+harry potter
+sonic
+mario
+lego
+squishmallow
+squishmallows
+labubu
+taylor swift
+swiftie
+kpop
+k-pop
+demon hunters
+stranger things
+wicked
+wednesday
+dog man
+bible
+coco wyo
+cocowyo
+crayola
+melissa and doug
+melissa & doug
+baby shark
+grinch
+dr seuss
+care bears
+my little pony
+unicorn academy
+nfl
+nba
+# 2. Educational / learning positioning (too close to the other "Little Fox" brand; see CLAUDE.md)
+learn
+learning
+educational
+alphabet
+abc
+phonics
+letters
+numbers
+counting
+tracing
+handwriting
+workbook
+preschool workbook
+kindergarten
+homeschool
+english
+sight words
+songs
+# 3. Health or therapy claims
+anxiety
+therapy
+therapeutic
+adhd
+dementia
+alzheimer
+alzheimers
+stress relief
+mental health
+# 4. Not our product
+adult content
+swear
+cuss
+sweary
+nsfw
+sexy
+weed
+stoner
