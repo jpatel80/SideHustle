@@ -1,0 +1,53 @@
+{
+  "title": "Cozy Winter Animals Coloring Book",
+  "subtitle": "30 Bold and Easy Pictures for Kids Ages 3-6",
+  "author": "Wren Ashby",
+  "imprint": "Little Fox Paper Co",
+  "audience": "kids",
+  "reading_age": [
+    3,
+    6
+  ],
+  "theme": "winter",
+  "badge": "30|BIG PICTURES|TO COLOR!",
+  "cover_art": 1,
+  "title_art": 1,
+  "stickers": [
+    2,
+    10,
+    24,
+    21,
+    30
+  ],
+  "seed": 3,
+  "blurb": [
+    "30 cozy winter animals ready to be colored.",
+    "One big, bold picture on every page, with thick clean lines that are easy for little hands.",
+    "Single-sided pages with a blank page behind each picture.",
+    "The inside pages are black and white. The colors on the cover are just an example!"
+  ],
+  "description": "Snuggle up with 30 cozy winter animals ready to be colored! Each page has one big, bold, simple picture, from a sleepy owl in a striped scarf and a polar bear cub with a snowman to penguins, bunnies, a puppy with a sled and a fox curled up in the snow. Everything is drawn with thick clean lines that are easy for little hands to color.<br><br>\n<b>What's inside</b><br>\n&bull; 30 one-sided coloring pages, with a blank page behind each picture<br>\n&bull; Large, simple shapes with plenty of room to color<br>\n&bull; Friendly winter animals, snowmen, cozy cabins and snowflakes<br>\n&bull; A \"This book belongs to\" page and a color test page<br>\n&bull; Large 8.5 x 11 inch pages<br>\n<br>\nGreat for crayons, colored pencils and washable markers. A fun quiet-time activity and an easy gift for young children who love animals and snowy days.<br><br>\nThe inside pages are printed in black and white, ready for you to color. The colors on the cover are just an example.<br><br>\nThe illustrations in this book were generated with AI image tools and were selected and arranged by the publisher, Little Fox Paper Co.",
+  "keywords": [
+    "winter coloring book for kids ages 4-8",
+    "bold and easy coloring book for kids",
+    "christmas coloring book for toddlers",
+    "animal coloring book ages 3-6",
+    "big simple pictures for preschool kids",
+    "stocking stuffer activity book for children",
+    "snowman penguin owl bear pictures to color"
+  ],
+  "categories": [
+    "Books > Children's Books > Activities, Crafts & Games > Activity Books > Coloring Books",
+    "Books > Children's Books > Animals (closest winter or forest animals entry)",
+    "Books > Children's Books > Holidays & Celebrations (closest winter entry)"
+  ],
+  "price_usd": 7.99,
+  "budget_usd": 4.0,
+  "model": "openai/gpt-image-2",
+  "quality": "low",
+  "published": null,
+  "notes": [
+    "**Age label.** The pictures are simple single subjects, so the cover says ages 3-6 (it said 4-8 before the 2026-11-14 audit). Shoppers type \"ages 4-8\" most often (Amazon search suggestions, 2026-11-14), so that phrase is used once, in keyword 1; ages 4-6 overlap, older children may find the pictures too easy.",
+    "**Price.** 30 pictures is thin for $9.99, so the book is priced in the 50% band. Extending it to 50 pictures (about $0.15 of images, same printing cost) would support $9.99 and a royalty of $3.15: tell Claude if you want that."
+  ]
+}

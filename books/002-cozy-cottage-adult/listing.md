@@ -1,81 +1,108 @@
-# Book 2 listing: Cozy Cottage Coloring Book for Adults
+# Upload kit: Cozy Cottage Coloring Book for Adults
 
-Status: **FINAL DRAFT for owner review** (pages, interior, cover and page count exist; QA record at the bottom). Fields follow the order of the KDP "Create paperback" form. Items marked **[verify]** could not be confirmed from KDP's public help pages. You paste and publish; Claude never logs in to KDP.
+Generated 2026-11-14 by `scripts/book_factory.py` from `book.json`. Do not edit by hand: change `book.json` and run `finish` again. About 10 minutes in KDP. You upload and publish; Claude never logs in to KDP.
 
-## Files to upload (committed in `final/`)
-- Interior: `books/002-cozy-cottage-adult/final/interior.pdf`: 84 pages, 8.5 x 11 in, no bleed, fonts embedded
-- Cover: `books/002-cozy-cottage-adult/final/cover.pdf`: 17.4392 x 11.25 in (5232 x 3375 px at 300 DPI), spine 0.1892 in (back + spine + front, 0.125 in bleed). The spine is left blank: at 84 pages it is only 0.19 in wide, which after KDP's required 1/16 in clearance on each side would fit text about 4 pt tall (unreadable). KDP would print spine text at this page count, so if you want one, tell Claude and a tiny line can be added.
-- Verify the cover in KDP's cover previewer; if KDP reports a different spine width, tell Claude and the cover is regenerated.
+## Before you start (one time per pen name)
+- [ ] Search Amazon Books for the author name **"Clara Whitcombe"** (in quotes). If an author with that exact name already has books, stop and tell Claude: the name cannot be changed after publishing.
+- [ ] **The author name on this book is a placeholder.** Pick the adult pen name (see `research/pen_names.md`), tell Claude, and the files are rebuilt in a few minutes.
 
-## Step 1: Paperback details
-- **Language:** English
-- **Book title:** Cozy Cottage Coloring Book for Adults
-- **Subtitle:** 40 Detailed Scenes of Gardens, Kitchens and Reading Nooks
-- **Author:** Wren Ashby (same pen name as book 1; see owner decision 3). Do **not** put "Little Fox Paper Co" in the Author field.
-- **Imprint** (cover, title page, copyright page only): Little Fox Paper Co
+## 1. Files (in this folder's `final/`)
+- Manuscript: `interior.pdf` (106 pages, 8.5 x 11 in, no bleed, 50 pictures)
+- Cover: `cover.pdf` (17.4887 x 11.2500 in, spine 0.2387 in for white paper)
 
-### Description (paste into the description box; HTML is accepted)
+## 2. Paperback details (paste each field)
+| Field | Value |
+|---|---|
+| Language | English |
+| Book title | Cozy Cottage Coloring Book for Adults |
+| Subtitle | 50 Bold and Easy Scenes of Gardens, Kitchens and Reading Nooks |
+| Series | leave blank |
+| Edition number | leave blank |
+| Author (first / last name) | Clara Whitcombe |
+| Contributors | leave blank (never put Little Fox Paper Co here) |
+| Publishing rights | I own the copyright and I hold the necessary publishing rights (see note A) |
+| Sexually explicit images or title | No |
+| Reading age | leave blank (adult audience, not adult content) |
+| Primary marketplace | Amazon.com |
+| Low-content book box | leave unticked: KDP's help says coloring books are generally not low-content **[verify in the form]** |
+| Large-print box | leave unticked |
+
+**Description** (paste as is; the box accepts this formatting):
 ```
-Step into a world of cozy cottages, blooming gardens and warm kitchens with 40 detailed coloring pages for adults. Each single-sided picture is drawn with clean, fine lines and plenty of patterns and textures: a thatched cottage and its garden gate, a window nook with a sleeping cat, a tea table with scones, a bookshelf full of treasures, beehives among the lavender, a rabbit in the vegetable patch and much more.<br><br>
+Step into a world of cozy cottages, blooming gardens and warm kitchens with 50 bold and easy coloring pages for adults. Each single-sided picture is drawn with clean, confident lines and open shapes: a thatched cottage and its garden gate, a window seat with a sleeping cat, a tea table with scones, a bookshelf full of treasures, beehives among the lavender, a rabbit in the vegetable patch and much more.<br><br>
 <b>What's inside</b><br>
-&bull; 40 one-sided coloring pages, with a blank page behind each picture<br>
-&bull; Detailed scenes of cottages, gardens, kitchens, reading nooks and cozy animals<br>
-&bull; Clean lines with clearly separated areas, from big shapes to fine details<br>
-&bull; A "This book belongs to" page<br>
-&bull; Large 8.5 x 11 inch pages<br><br>
-A pleasant hobby for quiet evenings, and an easy gift for anyone who loves gardens, tea and books. Works well with colored pencils, gel pens and fine-tip markers (a sheet of scrap paper behind the page is a good habit with markers).<br><br>
+&bull; 50 one-sided coloring pages, with a blank page behind each picture<br>
+&bull; Cottages, gardens, kitchens, reading nooks and cozy animals<br>
+&bull; Bold, clean outlines with clearly separated areas: no tiny fiddly details<br>
+&bull; A "This book belongs to" page and a color test page<br>
+&bull; Large 8.5 x 11 inch pages<br>
+<br>
+A pleasant hobby for quiet evenings and an easy gift for anyone who loves gardens, tea and books. Works well with colored pencils, gel pens and markers (slip a sheet of scrap paper behind the page when you use markers).<br><br>
 The inside pages are printed in black and white, ready for you to color. The colors on the cover are just an example.<br><br>
-The illustrations in this book were created with AI image tools and were selected and arranged by the publisher, Little Fox Paper Co.
+The illustrations in this book were generated with AI image tools and were selected and arranged by the publisher, Little Fox Paper Co.
 ```
-(about 1,400 characters; KDP's limit is 4,000 **[verify]**)
 
-- **Publishing rights:** "I own the copyright and I hold necessary publishing rights." See owner decision 2.
-- **Primary audience, sexually explicit content:** No. This is an adult-audience coloring book, not adult content. Choose the general adult option if the form asks for a reading age, or leave the age range blank **[verify]**.
+**Categories** (choose up to three; pick the closest entries the menu offers **[verify]**):
+1. Books > Crafts, Hobbies & Home > Coloring Books for Grown-Ups > Flowers & Landscapes
+2. Books > Crafts, Hobbies & Home > Coloring Books for Grown-Ups > Animals (or the general Coloring Books for Grown-Ups entry)
+3. Books > Crafts, Hobbies & Home > Coloring Books for Grown-Ups (general entry)
 
-### Keywords (7 slots)
-1. cottagecore coloring pages for adults
-2. detailed garden and flower coloring pages
-3. cozy home and tea time scenes to color
-4. single sided pages for gel pens and pencils
-5. gift for garden and book lovers
-6. country cottage cat and rabbit coloring pages
-7. quiet evening hobby for grown ups
+**Keywords** (one per box):
+1. bold and easy coloring book for adults
+2. cozy coloring book for adults
+3. cottagecore coloring book for adults
+4. flower coloring book for adults
+5. coloring book for seniors large print
+6. coloring book for alcohol markers
+7. simple garden and tea time scenes to color
 
-Slot limits (about 50 characters each) **[verify]**. "Cottagecore" is a general style word, not a brand. No wellness or health claims (no "stress relief", "anxiety", "therapy").
+## 3. Paperback content
+| Field | Value |
+|---|---|
+| ISBN | Get a free KDP ISBN |
+| Publication date | leave blank |
+| Ink and paper | Black & white interior with **white** paper |
+| Trim size | 8.5 x 11 in |
+| Bleed | No bleed |
+| Cover finish | Matte (your choice; no effect on cost) |
+| Manuscript | upload `interior.pdf` |
+| Cover | "Upload a cover you already have": `cover.pdf`. Do not add your own barcode. |
+| AI-generated content | **Yes** |
+| AI: texts | None (title, copyright and "belongs to" lines were written by us). If you count the store description, which Claude drafted, answer "Some sections, with extensive editing" **[verify the options the form shows]** |
+| AI: images | Many AI-generated images, with minimal or no editing. Tool: GPT Image 2 (OpenAI) via OpenRouter |
+| AI: translations | None |
 
-### Categories (choose two)
-Closest fit: an adult coloring-book category (for example Crafts, Hobbies & Home > Coloring Books for Grown-Ups) and a nature / gardens subcategory. **[verify]** menu paths; do not choose a children's category.
+Then open the **previewer** and page through the whole book: no picture may touch a page edge, and the cover text must sit inside the dotted lines.
 
-## Step 2: Paperback content
-- **Print ISBN:** use the free KDP ISBN. Coloring books are "not generally low-content" per KDP's help, so it should be offered **[verify in form]**.
-- **Manuscript:** upload `interior.pdf`. **Bleed: No bleed.** Trim size 8.5 x 11 in. Black & white interior, **white** paper (the cover's spine width assumes white paper).
-- **Cover:** upload `cover.pdf` (print-ready PDF). Do not upload your own barcode.
-- **Generative AI content question:** answer **Yes**. The images are **AI-generated** (not just AI-assisted): generated with OpenAI's GPT Image 2 through OpenRouter, then selected, cropped and converted to black and white by us. No AI-written text inside the book other than the title, copyright and "belongs to" pages we wrote. If unsure about the store-page text (drafted with Claude's help), disclose rather than skip **[verify]**.
-- **Previewer:** page through the whole book in KDP's previewer. Fine-detail pages (cottage scenes) should be checked closely for line quality.
+## 4. Rights and pricing
+- Territories: all territories (worldwide rights).
+- **List price on Amazon.com: $9.99** (royalty about $3.15 per copy). Let KDP convert the other marketplaces.
+- Expanded Distribution: leave off.
 
-## Step 3: Pricing
-- **Printing cost (Amazon.com, B&W, 8.5 x 11, 24-110 pages):** a flat **$2.84 per book** (KDP's Paperback Printing Cost page, fetched 2026-11-06). Check the calculator in the form.
-- **Minimum list price:** $2.84 / 0.60 = about **$4.73** at the 60% rate (about $5.68 at 50%). **[verify which rate applies]**
-- **Royalty examples (my estimates):** at $9.99 and 60%: **$3.15** per sale; at $8.99: **$2.55**; at $7.99: **$1.95**.
-- **Suggested starting price:** $8.99-$10.99. Adult coloring books usually list a little higher than kids' ones but I could not check competitor prices from this environment; compare a few similar titles yourself.
+| List price | Royalty rate | Printing cost | Royalty per copy |
+|---|---|---|---|
+| $5.99 | 50% | $2.84 | $0.16 |
+| $6.99 | 50% | $2.84 | $0.66 |
+| $7.99 | 50% | $2.84 | $1.16 |
+| $8.99 | 50% | $2.84 | $1.66 |
+| $9.99 | 60% | $2.84 | $3.15 |
+| $10.99 | 60% | $2.84 | $3.75 |
+| $11.99 | 60% | $2.84 | $4.35 |
+| $12.99 | 60% | $2.84 | $4.95 |
 
-## Owner decisions and honest caveats
-1. **AI disclosure** is Yes in the form, and the copyright page says the art was created with AI image tools. Do not remove either.
-2. **Copyright on AI images is uncertain** in the US (purely AI-generated images may not qualify for protection; **[verify]**, not legal advice). The "I own the copyright" tick is your call.
-3. **Pen name:** one pen name for kids and adult books was the agreed default. If you would rather keep adult books under a second name, tell Claude before publishing: the author name cannot be changed after publishing, and the cover, title page and copyright page are rebuilt in a minute.
-4. **Niche is untested.** I picked "cozy cottage" for its general popularity; I could not measure demand or competition **[verify]**. Adult coloring is crowded.
-5. **Marker bleed-through** is a normal concern in coloring books; every picture has a blank page behind it, which helps.
-6. Sales are unproven; this is a test.
+Amazon.com pays 50% of list price up to $9.98 and 60% from $9.99, minus the $2.84 printing cost (KDP help, checked 2026-11-14). The form shows the real figure: use it if it differs.
 
-## QA record
-- 40 pages generated with `openai/gpt-image-2` at low quality (lowest quality gave the boldest fine lines; medium and high gave thinner, fainter lines and cost 8x and 33x more). Every page was checked by eye for closed outlines, stray text, large black fills, anatomy and look-alike characters. None needed a reroll.
-- Interior built with a slightly higher black/white cutoff (170) so thin lines print bolder.
-- **Known weak spot, please check in KDP's previewer and consider a proof copy:** the images are 1152 x 1536 px, upscaled to 300 DPI, and a few busy texture areas (cushion patterns, background bushes, fabric) break into short crackly marks at full size. Large shapes and outlines are clean. Page 19 (boots) and page 21 (cat on the windowsill) are the busiest. The mechanical QA flags every page for "gray shading" because fine lines produce many anti-aliased pixels; that is a false alarm for this style (the build converts to pure black and white).
-- Spend for this book: see `final/MANIFEST.md`.
+## 5. Before you press Publish
+- [ ] Author name searched on Amazon (top of this page)
+- [ ] Every page looked at in the previewer
+- [ ] AI-generated content answered **Yes**
+- [ ] Order a **proof copy** first if this is the first book in this style (KDP: "Request printed proofs"); check line quality, margins and cover colors
+- [ ] After it goes live: tell Claude the publication date (it is recorded in `book.json` as `published`) so the sales tracker starts counting
 
-## Checklist before you press Publish
-- [ ] Wren Ashby (or your chosen name) checked on Amazon Books / Kindle
-- [ ] Interior and cover uploaded; every page looked at in the previewer; cover looked at in the cover previewer
-- [ ] AI-generated images answered **Yes**; description and copyright page agree
-- [ ] Price chosen after seeing KDP's minimum and royalty figures
-- [ ] Optional: order one proof copy to check the fine-line print quality
+## Notes
+- **A. Copyright.** The pictures were generated with AI image tools. In the US, purely AI-generated images may not be protected by copyright (US Copyright Office guidance; not legal advice **[verify]**). The book's copyright page therefore claims only the selection, arrangement and design. KDP's rights question has only two options; "I own the copyright" refers to your right to publish this book, and the other option (public domain) does not fit.
+- **B. AI disclosure.** KDP requires it for AI-generated images and says so in its Content Guidelines (checked 2026-11-14). The copyright page and the description also say it. Never remove it.
+- **C. Brand.** The imprint is always written in full: Little Fox Paper Co. It appears on the cover, title page and copyright page only.
+- **Rebuilt 2026-11-14.** The first version (40 finely detailed scenes) printed crackly: fine textures broke into marks too small to color. All pages were regenerated in a bold, clean style and the book grew to 50 pictures, the usual size for this kind of book.
+- **Keywords 5 and 6** describe the bold lines and single-sided pages; the book is not printed in a special large-print format and uses normal KDP paper, so markers can show through (hence the blank backs). Drop either keyword if you find it too strong.
+- **Cover style.** The cover uses the same playful family as the kids' books because that is the current project rule; an adult-style cover is recommended (see TODO).

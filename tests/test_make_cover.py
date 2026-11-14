@@ -124,8 +124,8 @@ class CoverTests(unittest.TestCase):
         self.assertEqual(dark, 0)
 
     def test_spine_has_text_when_allowed(self):
-        out = self.build(100, name="c100.pdf")
-        g = mc.cover_geometry(100, (8.5, 11.0))
+        out = self.build(120, name="c100.pdf")
+        g = mc.cover_geometry(120, (8.5, 11.0))
         im = Image.open(out.with_suffix(".png")).convert("RGB")
         strip = im.crop((round(g["spine_x0"] * 300), 0, round(g["spine_x1"] * 300), im.height))
         dark = sum(1 for p in strip.getdata() if p[0] < 90 and p[2] < 140)

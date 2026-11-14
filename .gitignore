@@ -8,3 +8,5 @@ books/*/*.pdf
 # model bake-off and scratch output stay local
 out/
 books/*/cover*.png
+# factory review sheets (contact sheets, qa.json) are scratch
+books/*/review/

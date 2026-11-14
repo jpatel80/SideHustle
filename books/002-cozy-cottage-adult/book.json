@@ -1,0 +1,52 @@
+{
+  "title": "Cozy Cottage Coloring Book for Adults",
+  "subtitle": "50 Bold and Easy Scenes of Gardens, Kitchens and Reading Nooks",
+  "author": "Clara Whitcombe",
+  "author_is_placeholder": true,
+  "imprint": "Little Fox Paper Co",
+  "audience": "adult",
+  "theme": "garden",
+  "badge": "50|BOLD & EASY|SCENES",
+  "cover_art": 2,
+  "title_art": 1,
+  "stickers": [
+    3,
+    24,
+    38,
+    47,
+    21
+  ],
+  "seed": 3,
+  "style_file": "prompts/style_adult_clean.txt",
+  "blurb": [
+    "50 cozy cottage, garden and kitchen scenes ready to be colored.",
+    "Bold, clean lines and open shapes that are easy to see and relaxing to color.",
+    "Single-sided pages with a blank page behind each picture.",
+    "The inside pages are black and white. The colors on the cover are just an example!"
+  ],
+  "description": "Step into a world of cozy cottages, blooming gardens and warm kitchens with 50 bold and easy coloring pages for adults. Each single-sided picture is drawn with clean, confident lines and open shapes: a thatched cottage and its garden gate, a window seat with a sleeping cat, a tea table with scones, a bookshelf full of treasures, beehives among the lavender, a rabbit in the vegetable patch and much more.<br><br>\n<b>What's inside</b><br>\n&bull; 50 one-sided coloring pages, with a blank page behind each picture<br>\n&bull; Cottages, gardens, kitchens, reading nooks and cozy animals<br>\n&bull; Bold, clean outlines with clearly separated areas: no tiny fiddly details<br>\n&bull; A \"This book belongs to\" page and a color test page<br>\n&bull; Large 8.5 x 11 inch pages<br>\n<br>\nA pleasant hobby for quiet evenings and an easy gift for anyone who loves gardens, tea and books. Works well with colored pencils, gel pens and markers (slip a sheet of scrap paper behind the page when you use markers).<br><br>\nThe inside pages are printed in black and white, ready for you to color. The colors on the cover are just an example.<br><br>\nThe illustrations in this book were generated with AI image tools and were selected and arranged by the publisher, Little Fox Paper Co.",
+  "keywords": [
+    "bold and easy coloring book for adults",
+    "cozy coloring book for adults",
+    "cottagecore coloring book for adults",
+    "flower coloring book for adults",
+    "coloring book for seniors large print",
+    "coloring book for alcohol markers",
+    "simple garden and tea time scenes to color"
+  ],
+  "categories": [
+    "Books > Crafts, Hobbies & Home > Coloring Books for Grown-Ups > Flowers & Landscapes",
+    "Books > Crafts, Hobbies & Home > Coloring Books for Grown-Ups > Animals (or the general Coloring Books for Grown-Ups entry)",
+    "Books > Crafts, Hobbies & Home > Coloring Books for Grown-Ups (general entry)"
+  ],
+  "price_usd": 9.99,
+  "budget_usd": 4.0,
+  "model": "openai/gpt-image-2",
+  "quality": "low",
+  "published": null,
+  "notes": [
+    "**Rebuilt 2026-11-14.** The first version (40 finely detailed scenes) printed crackly: fine textures broke into marks too small to color. All pages were regenerated in a bold, clean style and the book grew to 50 pictures, the usual size for this kind of book.",
+    "**Keywords 5 and 6** describe the bold lines and single-sided pages; the book is not printed in a special large-print format and uses normal KDP paper, so markers can show through (hence the blank backs). Drop either keyword if you find it too strong.",
+    "**Cover style.** The cover uses the same playful family as the kids' books because that is the current project rule; an adult-style cover is recommended (see TODO)."
+  ]
+}

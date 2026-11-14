@@ -1,81 +1,106 @@
-# Book 3 listing: Happy Ocean Animals Coloring Book
+# Upload kit: Happy Ocean Animals Coloring Book
 
-Status: **FINAL DRAFT for owner review** (pages, interior, cover and page count exist; QA record at the bottom). Fields follow the order of the KDP "Create paperback" form. Items marked **[verify]** could not be confirmed from KDP's public help pages. You paste and publish; Claude never logs in to KDP.
+Generated 2026-11-14 by `scripts/book_factory.py` from `book.json`. Do not edit by hand: change `book.json` and run `finish` again. About 10 minutes in KDP. You upload and publish; Claude never logs in to KDP.
 
-## Files to upload (committed in `final/`)
-- Interior: `books/003-happy-ocean-animals/final/interior.pdf`: 64 pages, 8.5 x 11 in, no bleed, fonts embedded
-- Cover: `books/003-happy-ocean-animals/final/cover.pdf`: 17.3941 x 11.25 in (5218 x 3375 px at 300 DPI), spine 0.1441 in (back + spine + front, 0.125 in bleed). The spine is blank (under KDP's 80-page spine-text rule).
-- Verify the cover in KDP's cover previewer; if KDP reports a different spine width, tell Claude and the cover is regenerated.
+## Before you start (one time per pen name)
+- [ ] Search Amazon Books for the author name **"Wren Ashby"** (in quotes). If an author with that exact name already has books, stop and tell Claude: the name cannot be changed after publishing.
 
-## Step 1: Paperback details
-- **Language:** English
-- **Book title:** Happy Ocean Animals Coloring Book
-- **Subtitle:** 30 Big, Simple Pictures for Kids Ages 3-6
-- **Author:** Wren Ashby. Do **not** put "Little Fox Paper Co" in the Author field.
-- **Imprint** (cover, title page, copyright page only): Little Fox Paper Co
+## 1. Files (in this folder's `final/`)
+- Manuscript: `interior.pdf` (66 pages, 8.5 x 11 in, no bleed, 30 pictures)
+- Cover: `cover.pdf` (17.3986 x 11.2500 in, spine 0.1486 in for white paper)
 
-### Description (paste into the description box; HTML is accepted)
+## 2. Paperback details (paste each field)
+| Field | Value |
+|---|---|
+| Language | English |
+| Book title | Happy Ocean Animals Coloring Book |
+| Subtitle | 30 Big, Simple Pictures for Toddlers Ages 1-4 |
+| Series | leave blank |
+| Edition number | leave blank |
+| Author (first / last name) | Wren Ashby |
+| Contributors | leave blank (never put Little Fox Paper Co here) |
+| Publishing rights | I own the copyright and I hold the necessary publishing rights (see note A) |
+| Sexually explicit images or title | No |
+| Reading age | minimum 1, maximum 4 |
+| Primary marketplace | Amazon.com |
+| Low-content book box | leave unticked: KDP's help says coloring books are generally not low-content **[verify in the form]** |
+| Large-print box | leave unticked |
+
+**Description** (paste as is; the box accepts this formatting):
 ```
-Dive into a sea of smiles! This coloring book has 30 big, simple pictures of friendly ocean animals, from a happy whale and a waving octopus to a sea turtle, a crab, a jellyfish and a dolphin leaping over a wave. Every picture has extra-thick lines and large open spaces, so it is easy for little hands to color inside the lines.<br><br>
+Dive into a sea of smiles! This first coloring book has 30 big, simple pictures of friendly ocean animals, from a happy whale and a waving octopus to a sea turtle, a crab, a jellyfish and a dolphin leaping over a wave. Every picture has extra-thick lines and large open spaces, made for toddlers and little hands that are just starting to color.<br><br>
 <b>What's inside</b><br>
 &bull; 30 one-sided coloring pages, with a blank page behind each picture<br>
 &bull; One big, simple subject on every page, with very few small details<br>
 &bull; Extra-thick lines and large spaces for crayons and chunky markers<br>
-&bull; A "This book belongs to" page<br>
-&bull; Large 8.5 x 11 inch pages<br><br>
-A fun quiet-time activity for young children and an easy gift for kids who love the sea.<br><br>
+&bull; A "This book belongs to" page and a color test page<br>
+&bull; Large 8.5 x 11 inch pages<br>
+<br>
+A fun quiet-time activity for toddlers and young children, and an easy gift for little ones who love the sea.<br><br>
 The inside pages are printed in black and white, ready for you to color. The colors on the cover are just an example.<br><br>
-The illustrations in this book were created with AI image tools and were selected and arranged by the publisher, Little Fox Paper Co.
+The illustrations in this book were generated with AI image tools and were selected and arranged by the publisher, Little Fox Paper Co.
 ```
-(about 1,000 characters; KDP's limit is 4,000 **[verify]**)
 
-- **Publishing rights:** "I own the copyright and I hold necessary publishing rights." See owner decision 2.
-- **Primary audience, sexually explicit content:** No
-- **Reading age:** minimum 3, maximum 6 **[verify field names and the allowed range]**
+**Categories** (choose up to three; pick the closest entries the menu offers **[verify]**):
+1. Books > Children's Books > Activities, Crafts & Games > Activity Books > Coloring Books
+2. Books > Children's Books > Animals > Marine Life (closest entry)
+3. Books > Children's Books > Activities, Crafts & Games > Activity Books (general entry; do not pick an Early Learning category)
 
-### Keywords (7 slots)
-1. big simple pictures for toddlers and preschool kids
-2. thick line sea animal coloring pages
-3. easy coloring for little hands
-4. quiet time activity for ages 3 to 6
-5. gift for kids who love the beach
-6. whale octopus turtle and dolphin pictures to color
-7. single sided coloring pages for crayons
+**Keywords** (one per box):
+1. coloring book for toddlers 1-3
+2. toddler coloring books ages 1-3
+3. ocean coloring book bold and easy
+4. my first coloring book cute animals
+5. sea animals coloring book for kids ages 2-4
+6. big simple pictures for little hands
+7. whale octopus turtle dolphin pictures to color
 
-Slot limits (about 50 characters each) **[verify]**. No brand names. Note: nothing is described as educational.
+## 3. Paperback content
+| Field | Value |
+|---|---|
+| ISBN | Get a free KDP ISBN |
+| Publication date | leave blank |
+| Ink and paper | Black & white interior with **white** paper |
+| Trim size | 8.5 x 11 in |
+| Bleed | No bleed |
+| Cover finish | Matte (your choice; no effect on cost) |
+| Manuscript | upload `interior.pdf` |
+| Cover | "Upload a cover you already have": `cover.pdf`. Do not add your own barcode. |
+| AI-generated content | **Yes** |
+| AI: texts | None (title, copyright and "belongs to" lines were written by us). If you count the store description, which Claude drafted, answer "Some sections, with extensive editing" **[verify the options the form shows]** |
+| AI: images | Many AI-generated images, with minimal or no editing. Tool: GPT Image 2 (OpenAI) via OpenRouter |
+| AI: translations | None |
 
-### Categories (choose two)
-Closest fit: a children's coloring-book category and a children's animals / ocean category. **[verify]** menu paths.
+Then open the **previewer** and page through the whole book: no picture may touch a page edge, and the cover text must sit inside the dotted lines.
 
-## Step 2: Paperback content
-- **Print ISBN:** use the free KDP ISBN **[verify it is offered]**.
-- **Manuscript:** upload `interior.pdf`. **Bleed: No bleed.** Trim size 8.5 x 11 in. Black & white interior, **white** paper.
-- **Cover:** upload `cover.pdf`. Do not upload your own barcode.
-- **Generative AI content question:** answer **Yes**: **AI-generated** images made with OpenAI's GPT Image 2 through OpenRouter, selected, cropped and converted to black and white by us. If unsure about the store-page text (drafted with Claude's help), disclose rather than skip **[verify]**.
-- **Previewer:** page through the whole book in KDP's previewer.
+## 4. Rights and pricing
+- Territories: all territories (worldwide rights).
+- **List price on Amazon.com: $6.99** (royalty about $0.66 per copy). Let KDP convert the other marketplaces.
+- Expanded Distribution: leave off.
 
-## Step 3: Pricing
-- **Printing cost (Amazon.com, B&W, 8.5 x 11, 24-110 pages):** flat **$2.84 per book** (KDP's Paperback Printing Cost page, fetched 2026-11-06).
-- **Minimum list price:** about **$4.73** at the 60% rate (about $5.68 at 50%) **[verify which rate applies]**.
-- **Royalty examples (my estimates):** $7.99 at 60% = **$1.95** per sale; $6.99 = **$1.35**; $9.99 = **$3.15**.
-- **Suggested starting price:** $6.99-$8.99. Compare a few similar kids' coloring books on Amazon yourself; I could not check competitor prices from this environment.
+| List price | Royalty rate | Printing cost | Royalty per copy |
+|---|---|---|---|
+| $5.99 | 50% | $2.84 | $0.16 |
+| $6.99 | 50% | $2.84 | $0.66 |
+| $7.99 | 50% | $2.84 | $1.16 |
+| $8.99 | 50% | $2.84 | $1.66 |
+| $9.99 | 60% | $2.84 | $3.15 |
+| $10.99 | 60% | $2.84 | $3.75 |
+| $11.99 | 60% | $2.84 | $4.35 |
+| $12.99 | 60% | $2.84 | $4.95 |
 
-## Owner decisions and honest caveats
-1. **AI disclosure** is Yes in the form and on the copyright page. Do not remove either.
-2. **Copyright on AI images is uncertain** in the US **[verify]**; the "I own the copyright" tick is your call.
-3. **Pen name:** same as books 1 and 2. The author name cannot be changed after publishing.
-4. **Niche is untested and crowded:** ocean animals is a broad evergreen topic, but I could not measure demand or competition **[verify]**. Book 3 is deliberately simpler than book 1 so the two titles do not compete.
-5. Sales are unproven; this is a test.
+Amazon.com pays 50% of list price up to $9.98 and 60% from $9.99, minus the $2.84 printing cost (KDP help, checked 2026-11-14). The form shows the real figure: use it if it differs.
 
-## QA record
-- 30 pages generated with `openai/gpt-image-2` at low quality plus an "extra simple for ages 3 to 6" instruction. Every page was checked by eye for closed outlines, stray text, fills, anatomy and look-alike characters.
-- Page 11 (shark) was regenerated: the first version had a big toothy grin and eyebrows that looked too close to a well-known cartoon shark. The replacement has a calm closed smile and no teeth.
-- Known overlaps with book 1 (different pictures, same ideas): a seal with a ball, a penguin, a whale. Acceptable, but if you would rather avoid repeats across the catalog, tell Claude and those pages can be swapped.
-- Page 14 (manta ray) is the least polished: the face sits oddly on a very simple shape. Page 28 (eel in a rock) reads a little like a snake. Both are closed, colorable drawings; tell Claude if you want them redone.
-- Spend for this book: see `final/MANIFEST.md`.
+## 5. Before you press Publish
+- [ ] Author name searched on Amazon (top of this page)
+- [ ] Every page looked at in the previewer
+- [ ] AI-generated content answered **Yes**
+- [ ] Order a **proof copy** first if this is the first book in this style (KDP: "Request printed proofs"); check line quality, margins and cover colors
+- [ ] After it goes live: tell Claude the publication date (it is recorded in `book.json` as `published`) so the sales tracker starts counting
 
-## Checklist before you press Publish
-- [ ] Wren Ashby checked on Amazon Books / Kindle
-- [ ] Interior and cover uploaded; every page looked at in the previewer; cover looked at in the cover previewer
-- [ ] AI-generated images answered **Yes**; description and copyright page agree
-- [ ] Price chosen after seeing KDP's minimum and royalty figures
+## Notes
+- **A. Copyright.** The pictures were generated with AI image tools. In the US, purely AI-generated images may not be protected by copyright (US Copyright Office guidance; not legal advice **[verify]**). The book's copyright page therefore claims only the selection, arrangement and design. KDP's rights question has only two options; "I own the copyright" refers to your right to publish this book, and the other option (public domain) does not fit.
+- **B. AI disclosure.** KDP requires it for AI-generated images and says so in its Content Guidelines (checked 2026-11-14). The copyright page and the description also say it. Never remove it.
+- **C. Brand.** The imprint is always written in full: Little Fox Paper Co. It appears on the cover, title page and copyright page only.
+- **Age label.** These are toddler-level pictures, so the subtitle now says "for Toddlers Ages 1-4" (it said ages 3-6 before the 2026-11-14 audit).
+- **Price.** Toddler coloring books sell cheap; at $6.99 the royalty is small. Extending to 50 pictures and $7.99-9.99 is an option: tell Claude.

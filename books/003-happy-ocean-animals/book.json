@@ -1,0 +1,54 @@
+{
+  "title": "Happy Ocean Animals Coloring Book",
+  "subtitle": "30 Big, Simple Pictures for Toddlers Ages 1-4",
+  "author": "Wren Ashby",
+  "imprint": "Little Fox Paper Co",
+  "audience": "kids",
+  "reading_age": [
+    1,
+    4
+  ],
+  "theme": "ocean",
+  "badge": "30|BIG SIMPLE|PICTURES",
+  "cover_art": 3,
+  "title_art": 3,
+  "stickers": [
+    9,
+    2,
+    1,
+    7,
+    19
+  ],
+  "seed": 3,
+  "extra": "Extra simple for toddlers: one main subject, very few details, extra thick outlines, huge open areas.",
+  "blurb": [
+    "30 big, simple ocean animals ready to be colored.",
+    "One friendly picture on every page, with extra-thick lines and large spaces for little hands.",
+    "Single-sided pages with a blank page behind each picture.",
+    "The inside pages are black and white. The colors on the cover are just an example!"
+  ],
+  "description": "Dive into a sea of smiles! This first coloring book has 30 big, simple pictures of friendly ocean animals, from a happy whale and a waving octopus to a sea turtle, a crab, a jellyfish and a dolphin leaping over a wave. Every picture has extra-thick lines and large open spaces, made for toddlers and little hands that are just starting to color.<br><br>\n<b>What's inside</b><br>\n&bull; 30 one-sided coloring pages, with a blank page behind each picture<br>\n&bull; One big, simple subject on every page, with very few small details<br>\n&bull; Extra-thick lines and large spaces for crayons and chunky markers<br>\n&bull; A \"This book belongs to\" page and a color test page<br>\n&bull; Large 8.5 x 11 inch pages<br>\n<br>\nA fun quiet-time activity for toddlers and young children, and an easy gift for little ones who love the sea.<br><br>\nThe inside pages are printed in black and white, ready for you to color. The colors on the cover are just an example.<br><br>\nThe illustrations in this book were generated with AI image tools and were selected and arranged by the publisher, Little Fox Paper Co.",
+  "keywords": [
+    "coloring book for toddlers 1-3",
+    "toddler coloring books ages 1-3",
+    "ocean coloring book bold and easy",
+    "my first coloring book cute animals",
+    "sea animals coloring book for kids ages 2-4",
+    "big simple pictures for little hands",
+    "whale octopus turtle dolphin pictures to color"
+  ],
+  "categories": [
+    "Books > Children's Books > Activities, Crafts & Games > Activity Books > Coloring Books",
+    "Books > Children's Books > Animals > Marine Life (closest entry)",
+    "Books > Children's Books > Activities, Crafts & Games > Activity Books (general entry; do not pick an Early Learning category)"
+  ],
+  "price_usd": 6.99,
+  "budget_usd": 4.0,
+  "model": "openai/gpt-image-2",
+  "quality": "low",
+  "published": null,
+  "notes": [
+    "**Age label.** These are toddler-level pictures, so the subtitle now says \"for Toddlers Ages 1-4\" (it said ages 3-6 before the 2026-11-14 audit).",
+    "**Price.** Toddler coloring books sell cheap; at $6.99 the royalty is small. Extending to 50 pictures and $7.99-9.99 is an option: tell Claude."
+  ]
+}

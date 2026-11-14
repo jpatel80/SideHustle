@@ -77,7 +77,7 @@ MIN_SIDE_PX = 1000  # openai/gpt-image-2 returns 1152 x 1536 px at 3:4; below ~1
 SPECK_IN = 0.045  # an enclosed white area smaller than this (inches across, at print size) cannot be colored
 MAX_SPECKS = {"kids": 25, "adult": 400}  # tiny enclosed areas allowed per page before it is flagged as "crackly"
 LINE_WEIGHT_SPREAD = 1.6  # flag pages whose line weight is this many times above/below the book median
-DUP_HAMMING = 6
+DUP_HAMMING = 16  # of 256 hash bits
 
 
 # ----------------------------------------------------------------------------- helpers
@@ -158,7 +158,8 @@ def autocrop(gray: Image.Image, pad_frac: float = 0.02, ink_level: int = 200) ->
 
 
 def dhash(gray: Image.Image) -> int:
-    small = np.asarray(gray.resize((9, 8), Image.LANCZOS), dtype=np.int16)
+    # 16 x 16 difference hash (256 bits): the old 8 x 8 hash called different sparse line drawings duplicates
+    small = np.asarray(gray.resize((17, 16), Image.LANCZOS), dtype=np.int16)
     bits = (small[:, 1:] > small[:, :-1]).flatten()
     return int("".join("1" if b else "0" for b in bits), 2)
 
@@ -188,7 +189,7 @@ def analyse_image(path: Path, style: str = "kids") -> dict:
     ink_ratio = float((a < 128).mean())
     ink = a < 128
     line_px, specks = line_stats(ink, probe.width)
-    border = max(2, int(0.01 * max(a.shape)))
+    border = 3  # ink in the outermost pixels means the picture was cut off by the image edge
     touches = bool(
         ink[:border, :].any() or ink[-border:, :].any() or ink[:, :border].any() or ink[:, -border:].any()
     )
@@ -202,7 +203,7 @@ def analyse_image(path: Path, style: str = "kids") -> dict:
     if ink_ratio < MIN_INK_RATIO:
         flags.append(f"nearly empty page ({ink_ratio:.1%} black)")
     if touches and style == "kids":  # adult pages are full-page compositions; reaching the edge is normal there
-        flags.append("artwork touches the image edge (may be cropped or feel cramped)")
+        flags.append("artwork is cut off at the image edge")
     if specks is not None and specks > MAX_SPECKS[style]:
         flags.append(f"crackly detail ({specks} enclosed areas too small to color; limit {MAX_SPECKS[style]})")
     return {
@@ -418,7 +419,9 @@ def draw_text_page(c, kind, a, fonts, page_w, page_h, safe, title_art: Image.Ima
             y = draw_centered_text(c, a.subtitle, body, 19, y - 6, page_w, cx_w)
         foot = bottom + 95
         if title_art is not None:  # one picture from the book, so the first page is not bare
-            place_image(c, title_art, a.dpi, left + cx_w * 0.14, foot + 20, right - cx_w * 0.14, y - 10)
+            box = (left + cx_w * 0.14, foot + 28, right - cx_w * 0.14, y - 6)
+            bw, _ = threshold_art(title_art, box[2] - box[0], box[3] - box[1], a.threshold, a.dpi)
+            place_image(c, bw, a.dpi, *box)
         draw_centered_text(c, f"by {a.author}", body, 18, foot - 10, page_w, cx_w)
         if a.imprint:
             draw_centered_text(c, a.imprint, body, 13, foot - 40, page_w, cx_w)
@@ -522,8 +525,7 @@ def cmd_build(args) -> int:
             title_art = None
             if kind == "title" and args.title_art:
                 src = images[min(max(args.title_art, 1), len(images)) - 1]
-                title_art, _ = threshold_art(load_gray(src), (right - left) * 0.72, (top - bottom) * 0.52,
-                                             args.threshold, dpi)
+                title_art = load_gray(src)  # fitted to the space left on the title page when it is drawn
             draw_text_page(c, kind, args, fonts, pw, ph, safe, title_art)
         c.showPage()
     c.save()

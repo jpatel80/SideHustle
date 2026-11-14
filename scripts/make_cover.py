@@ -47,7 +47,7 @@ SAFE = 0.4  # inches kept clear of the trim edge for text (KDP minimum is 0.25)
 BARCODE_W, BARCODE_H = 2.0, 1.2  # KDP suggested barcode size, inches
 BARCODE_MARGIN = 0.4  # from trim and from spine (KDP minimum 0.25)
 SPINE_SAFE = 0.0625  # KDP: keep 1/16 in clear of the spine edges
-MIN_SPINE_TEXT_IN = 0.09  # smallest text height worth printing on the spine (about 6.5 pt)
+MIN_SPINE_TEXT_IN = 0.125  # usable spine height needed for type of at least 7 pt (KDP's minimum readable size)
 
 BG = (206, 232, 245)  # pale winter blue
 INK = (24, 52, 92)  # navy for text
@@ -396,6 +396,8 @@ def draw_spine(img, g, a, title_font_path, body_font_path) -> None:
     d = ImageDraw.Draw(strip)
     text = f"{a.title}   |   {a.author}"
     f = fit_font(d, text, title_font_path, sh, px(0.5))
+    while sum(f.getmetrics()) > sw and f.size > 8:  # the type must also fit the spine's width, not only its length
+        f = ImageFont.truetype(title_font_path, f.size - 1)
     asc, desc = f.getmetrics()
     d.text(((sh - d.textlength(text, font=f)) / 2, (sw - (asc + desc)) / 2), text, font=f, fill=INK + (255,))
     rot = strip.rotate(-90, expand=True)  # reads top-to-bottom, as US paperbacks do

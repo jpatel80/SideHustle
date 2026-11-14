@@ -1,20 +1,20 @@
 # Final files: 003-happy-ocean-animals
 
-- Interior PDF pages: 64
+- Interior PDF pages: 66
 - Page images: 30 (optimized PNG; stored as grayscale: 30, same luminance the interior builder uses)
-- Image requests in ledger: 33, total spend this book: $0.1979
-- Total size of final/: 21.3 MB
+- Image requests in ledger: 38, total spend this book: $0.2280
+- Total size of final/: 24.0 MB
 
 Upload to KDP: `interior.pdf` (manuscript) and `cover.pdf` (cover). Listing text: `../listing.md`.
 
 | file | bytes | sha256 |
 |---|---|---|
-| cover.pdf | 4836447 | 05311c984ccec284... |
-| cover_preview.png | 3598090 | 50ea86f70136e184... |
-| interior.pdf | 1891653 | df7d6da819a3243d... |
-| ledger.jsonl | 5553 | d4d8956f729f8fb3... |
+| cover.pdf | 4873252 | 5c936128c675834b... |
+| cover_preview.png | 3621905 | b7e6fc2005de7ae6... |
+| interior.pdf | 4581806 | 8d4cabddfe225328... |
+| ledger.jsonl | 9156 | 64ec5f8fe88b9871... |
 | pages/01_a-big-smiling-whale-spouting-a-little-fo.png | 351374 | 6644894b04a14840... |
-| pages/02_a-friendly-octopus-waving-with-four-of-i.png | 376416 | 24456ddbcc985865... |
+| pages/02_a-friendly-octopus-with-a-round-head-and.png | 360204 | 87722be408a49a22... |
 | pages/03_a-smiling-sea-turtle-swimming.png | 353083 | ca1621110f39b729... |
 | pages/04_a-cute-orange-and-white-striped-fish-wit.png | 351530 | 0ac0b976110aa4c1... |
 | pages/05_a-happy-jellyfish-with-a-round-dome-and-.png | 365429 | a071499588e9652d... |
@@ -24,9 +24,9 @@ Upload to KDP: `interior.pdf` (manuscript) and `cover.pdf` (cover). Listing text
 | pages/09_a-happy-dolphin-jumping-over-a-wave.png | 364588 | c33b379ca61daf13... |
 | pages/10_a-round-smiling-pufferfish.png | 370868 | 8d949bce9642b0cc... |
 | pages/11_a-calm-friendly-shark-swimming-with-a-sm.png | 319019 | d9cc400f74b2e48d... |
-| pages/12_a-smiling-seal-balancing-a-ball-on-its-n.png | 363476 | 24bb2c9747b1099d... |
-| pages/13_a-cute-penguin-standing-on-an-ice-block.png | 373258 | 8e53da2a00d417ac... |
-| pages/14_a-big-flat-manta-ray-gliding-with-a-smil.png | 328947 | f2a730e1896e6796... |
+| pages/12_a-smiling-oyster-shell-holding-one-big-p.png | 366700 | f544abe46b4a9597... |
+| pages/13_a-happy-hermit-crab-peeking-out-of-its-s.png | 384525 | 735cb2cc5adf35c2... |
+| pages/14_a-smiling-manta-ray-seen-from-above-with.png | 316463 | a91849c60b646b47... |
 | pages/15_a-smiling-lobster-with-two-big-claws.png | 412320 | 245aab273a4f13a5... |
 | pages/16_a-happy-narwhal-with-a-long-spiral-horn.png | 345426 | e5910ca6b723b363... |
 | pages/17_a-pile-of-three-seashells.png | 377624 | 01665848001c7b73... |
@@ -40,6 +40,6 @@ Upload to KDP: `interior.pdf` (manuscript) and `cover.pdf` (cover). Listing text
 | pages/25_an-open-treasure-chest-with-a-starfish-a.png | 374447 | 17f01511fbd9e301... |
 | pages/26_a-small-school-of-four-happy-fish-swimmi.png | 402329 | 5c74ca8370b8c28f... |
 | pages/27_a-smiling-sailboat-on-gentle-waves-with-.png | 359627 | 1405ea06894b3ce2... |
-| pages/28_a-friendly-eel-peeking-out-of-a-rock.png | 377182 | 4db94e3fd6d6ae23... |
+| pages/28_a-friendly-eel-with-a-long-wavy-body-swi.png | 347582 | 4c005175051ec76d... |
 | pages/29_a-coral-reef-with-three-big-simple-coral.png | 394001 | 9f1ba8ed57ebdc05... |
 | pages/30_a-smiling-dolphin-and-a-smiling-whale-si.png | 350005 | 1fe73dec03e982c7... |

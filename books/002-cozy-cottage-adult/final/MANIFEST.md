@@ -1,55 +1,65 @@
 # Final files: 002-cozy-cottage-adult
 
-- Interior PDF pages: 84
-- Page images: 40 (optimized PNG; stored as grayscale: 40, same luminance the interior builder uses)
-- Image requests in ledger: 40, total spend this book: $0.2351
-- Total size of final/: 67.3 MB
+- Interior PDF pages: 106
+- Page images: 50 (optimized PNG; stored as grayscale: 50, same luminance the interior builder uses)
+- Image requests in ledger: 103, total spend this book: $0.7811
+- Total size of final/: 73.3 MB
 
 Upload to KDP: `interior.pdf` (manuscript) and `cover.pdf` (cover). Listing text: `../listing.md`.
 
 | file | bytes | sha256 |
 |---|---|---|
-| cover.pdf | 6423444 | b2ca593bf2282a6c... |
-| cover_preview.png | 5007710 | 3d010ff0abf958d0... |
-| interior.pdf | 16581770 | ae7f79ec83730c90... |
-| ledger.jsonl | 6855 | a61272efd660a121... |
-| pages/01_a-thatched-roof-cottage-with-a-flower-ga.png | 1147062 | 733301ba3a70bd28... |
-| pages/02_a-round-topped-cottage-door-framed-by-cl.png | 880373 | 3d98eb43347ff4a1... |
-| pages/03_a-window-nook-with-a-cushioned-seat-trai.png | 981699 | f2410f0d9ec4bf36... |
-| pages/04_a-tea-table-with-a-teapot-stacked-cups-a.png | 1012444 | 75c2584c87aa4bc2... |
-| pages/05_a-tall-bookshelf-filled-with-books-a-lan.png | 881719 | b50197b23c02a41b... |
-| pages/06_a-garden-gate-overgrown-with-ivy-and-fox.png | 1034585 | 0cb1432907c8c836... |
-| pages/07_a-glass-greenhouse-full-of-potted-plants.png | 891741 | 7589af9be829db78... |
-| pages/08_a-kitchen-shelf-with-jars-of-herbs-woode.png | 887932 | 44c632a8fc5b5dbc... |
-| pages/09_honeybees-and-a-wooden-beehive-among-lav.png | 1068099 | 5d2e84ee8350da46... |
-| pages/10_a-woodland-mushroom-cluster-with-ferns-a.png | 953896 | 72630218bad640db... |
-| pages/11_a-porch-with-a-rocking-chair-a-knitted-b.png | 899125 | ae44b740f0c38ff3... |
-| pages/12_a-quilt-with-a-pattern-of-stars-and-flow.png | 966476 | 0b60c09fdd824355... |
-| pages/13_a-stone-bridge-over-a-stream-with-a-smal.png | 1068768 | ca41346d2b76acc5... |
-| pages/14_a-vegetable-garden-with-raised-beds-carr.png | 1083575 | e918c341510e5537... |
-| pages/15_a-cozy-kitchen-scene-with-a-loaf-of-brea.png | 864004 | 4cbc0693cbc390c4... |
-| pages/16_a-hedgehog-among-flowers-and-mushrooms-i.png | 974075 | 50a0b05f98cfc423... |
-| pages/17_a-wheelbarrow-overflowing-with-flowers-b.png | 895588 | b81956889bdf8f13... |
-| pages/18_a-birdbath-with-songbirds-tulips-and-a-t.png | 963555 | 27fec1dea35aa0f2... |
-| pages/19_a-pair-of-rain-boots-filled-with-flowers.png | 888581 | 9a4b75f201dccf78... |
-| pages/20_a-potting-bench-with-seedlings-clay-pots.png | 892092 | 04f8b7d845787eeb... |
-| pages/21_a-sleeping-cat-curled-up-on-a-windowsill.png | 1046808 | 344ea0cd0a01a444... |
-| pages/22_a-picnic-basket-on-a-blanket-with-sandwi.png | 1071679 | 0cfc90205ab0f282... |
-| pages/23_a-lavender-field-with-a-little-cottage-a.png | 1130053 | 60caf7ddc8a6c735... |
-| pages/24_a-rabbit-in-a-vegetable-garden-among-let.png | 996604 | 5012f4afd3f4e54e... |
-| pages/25_an-apple-orchard-with-a-ladder-baskets-o.png | 1088544 | 80f4ae4217a8b72d... |
-| pages/26_a-cozy-reading-chair-with-a-stack-of-boo.png | 856179 | 7cd493dc5c58d72c... |
-| pages/27_a-garden-table-with-a-sewing-basket-butt.png | 1086009 | 2030b03415e597ac... |
-| pages/28_a-farmhouse-porch-with-pumpkins-cornstal.png | 896784 | 4b1fa55a17d9d233... |
-| pages/29_a-cottage-kitchen-with-copper-pots-a-han.png | 931581 | 4c35218f54541907... |
-| pages/30_a-row-of-pretty-teacups-and-saucers-with.png | 951597 | eefbc3b70d8e0590... |
-| pages/31_a-garden-path-lined-with-stone-lanterns-.png | 1026902 | 44eb01c9df6f7862... |
-| pages/32_a-rustic-windmill-beside-a-cottage-with-.png | 1122409 | 32d2413424c37baf... |
-| pages/33_a-cottage-in-the-snow-with-smoke-from-th.png | 936275 | 946c259f1ef000e1... |
-| pages/34_a-basket-of-freshly-picked-flowers-besid.png | 1057584 | 28f2edea12b39dca... |
-| pages/35_a-little-bakery-window-with-pastries-bre.png | 808972 | 7c9bf28471e7934c... |
-| pages/36_a-cottage-attic-window-with-a-quilt-a-tr.png | 1087175 | aeea02298399734f... |
-| pages/37_a-stack-of-old-books-with-a-teapot-candl.png | 947014 | a181ab63dbf0d597... |
-| pages/38_a-sleepy-fox-curled-up-under-a-tree-with.png | 1006837 | 3746d001d50e8839... |
-| pages/39_a-cottage-garden-in-spring-with-tulips-d.png | 983698 | 764282a7d1093201... |
-| pages/40_a-cozy-fireplace-with-a-mantel-candles-f.png | 1001643 | be1aa8471fd26c1a... |
+| cover.pdf | 6308620 | a36b03ecdc0576dd... |
+| cover_preview.png | 4782668 | f3e207e9db9ddd55... |
+| interior.pdf | 28362641 | a06dd4819f671045... |
+| ledger.jsonl | 64561 | b90c576442368056... |
+| pages/01_a-thatched-roof-cottage-with-a-flower-ga.png | 639316 | 32874c97d76468bf... |
+| pages/02_a-round-topped-cottage-door-framed-by-cl.png | 743287 | 8e5aad8d4ca0198b... |
+| pages/03_a-window-nook-with-a-cushioned-seat-trai.png | 603081 | 475c9416ad4d5f56... |
+| pages/04_a-tea-table-with-a-teapot-stacked-cups-a.png | 644850 | 81c5fa0a7078e449... |
+| pages/05_a-tall-bookshelf-filled-with-books-a-lan.png | 472382 | 289aa4324313ff40... |
+| pages/06_a-garden-gate-overgrown-with-ivy-and-fox.png | 789859 | 4cb1daea21c04b71... |
+| pages/07_a-glass-greenhouse-full-of-potted-plants.png | 689784 | b6d3b3e07f916b76... |
+| pages/08_a-kitchen-shelf-with-jars-of-herbs-woode.png | 603512 | 8dea5119cb8a7761... |
+| pages/09_honeybees-and-a-wooden-beehive-among-lav.png | 766519 | ffb1f7dd41ffb86b... |
+| pages/10_a-woodland-mushroom-cluster-with-ferns-a.png | 702919 | 3bb05ad1cb884552... |
+| pages/11_a-porch-with-a-rocking-chair-a-knitted-b.png | 688057 | ce4850c36276903f... |
+| pages/12_a-quilt-with-a-pattern-of-stars-and-flow.png | 625019 | e4612e250725bee9... |
+| pages/13_a-stone-bridge-over-a-stream-with-a-smal.png | 674070 | b813273702d40a99... |
+| pages/14_a-vegetable-garden-with-raised-beds-carr.png | 780398 | 97c03e0d172ff8a8... |
+| pages/15_a-cozy-kitchen-scene-with-a-loaf-of-brea.png | 555734 | 5550ad6a950c7ff2... |
+| pages/16_a-hedgehog-among-flowers-and-mushrooms-i.png | 643181 | b464c4f1b0523eb4... |
+| pages/17_a-wheelbarrow-overflowing-with-flowers-b.png | 786859 | c93b35bdfd57e523... |
+| pages/18_a-birdbath-with-songbirds-tulips-and-a-t.png | 756694 | 4dcba6f9eea93d23... |
+| pages/19_a-pair-of-rain-boots-filled-with-flowers.png | 631805 | 4525edb1dd68f1d7... |
+| pages/20_a-potting-bench-with-seedlings-clay-pots.png | 580472 | 415740284a443d24... |
+| pages/21_a-sleeping-cat-curled-up-on-a-windowsill.png | 637602 | 4ce8d26450fbf60a... |
+| pages/22_a-picnic-basket-on-a-blanket-with-sandwi.png | 788455 | fe8d13a75c4be435... |
+| pages/23_a-lavender-field-with-a-little-cottage-a.png | 828112 | 1e10ee389579471b... |
+| pages/24_a-rabbit-in-a-vegetable-garden-among-let.png | 654609 | 5919b9dd07df2727... |
+| pages/25_an-apple-orchard-with-a-ladder-baskets-o.png | 699290 | a07aced07664933f... |
+| pages/26_a-cozy-reading-chair-with-a-stack-of-boo.png | 545126 | 7647341398876e6a... |
+| pages/27_a-garden-table-with-a-sewing-basket-butt.png | 717506 | 85d83107fcfa7996... |
+| pages/28_a-farmhouse-porch-with-pumpkins-cornstal.png | 688704 | e73b9e3020d4338f... |
+| pages/29_a-cottage-kitchen-with-copper-pots-a-han.png | 573972 | a9da11d7f988943b... |
+| pages/30_a-row-of-pretty-teacups-and-saucers-with.png | 686994 | e8e67dd50f2239a5... |
+| pages/31_a-garden-path-lined-with-stone-lanterns-.png | 799643 | 91315a154b92dd5c... |
+| pages/32_a-rustic-windmill-beside-a-cottage-with-.png | 736474 | 7797ca8260d75b6c... |
+| pages/33_a-cottage-in-the-snow-with-smoke-from-th.png | 554748 | 16051662fa71f0c8... |
+| pages/34_a-basket-of-freshly-picked-flowers-besid.png | 709756 | ce15bed082852a7a... |
+| pages/35_a-little-bakery-window-with-pastries-bre.png | 648438 | 053f733f6bd808fc... |
+| pages/36_a-cottage-attic-window-with-a-quilt-a-tr.png | 610050 | 76aabc9db02015b3... |
+| pages/37_a-stack-of-old-books-with-a-teapot-candl.png | 623954 | 793ec5bb0e047575... |
+| pages/38_a-sleepy-fox-curled-up-under-a-tree-with.png | 695667 | b65332def1fbe6a9... |
+| pages/39_a-cottage-garden-in-spring-with-tulips-d.png | 745672 | 5382a37c25bf7fec... |
+| pages/40_a-cozy-fireplace-with-a-mantel-candles-f.png | 558309 | d644089219b0fa65... |
+| pages/41_a-garden-swing-hanging-from-an-old-oak-t.png | 934809 | dae52d9f46784b48... |
+| pages/42_a-window-box-full-of-geraniums-with-wood.png | 568124 | 7f136fc795f4ecc9... |
+| pages/43_a-breakfast-tray-with-toast-a-boiled-egg.png | 558042 | 1769d52800fb018d... |
+| pages/44_a-row-of-jam-jars-and-a-basket-of-berrie.png | 725552 | e1bc86ce36f658a2... |
+| pages/45_a-wooden-garden-bench-with-cushions-a-su.png | 760913 | 19ab26178bd1175b... |
+| pages/46_a-chicken-coop-with-three-hens-sunflower.png | 628718 | be317d1bad88872c... |
+| pages/47_a-bicycle-with-a-flower-basket-leaning-a.png | 730583 | 4daa1c508c0ea9d5... |
+| pages/48_a-laundry-line-with-quilts-and-linens-in.png | 795544 | ad6958290ab424f5... |
+| pages/49_a-duck-pond-with-ducklings-reeds-water-l.png | 629524 | e5b9ab8c674361dc... |
+| pages/50_a-writing-desk-by-a-window-with-envelope.png | 552448 | dfa036c9ba055496... |

@@ -1,18 +1,18 @@
 # Final files: 001-cozy-winter-animals
 
-- Interior PDF pages: 64
+- Interior PDF pages: 66
 - Page images: 30 (optimized PNG; stored as grayscale: 30, same luminance the interior builder uses)
-- Image requests in ledger: 41, total spend this book: $0.3288
-- Total size of final/: 24.7 MB
+- Image requests in ledger: 43, total spend this book: $0.3406
+- Total size of final/: 28.4 MB
 
 Upload to KDP: `interior.pdf` (manuscript) and `cover.pdf` (cover). Listing text: `../listing.md`.
 
 | file | bytes | sha256 |
 |---|---|---|
-| cover.pdf | 5336950 | 71eb71224ad94a43... |
-| cover_preview.png | 3964876 | 70a634968d959dc6... |
-| interior.pdf | 2702609 | acb5f74a8cc48610... |
-| ledger.jsonl | 7046 | 0f61b19617bcb2b2... |
+| cover.pdf | 5335366 | 310f2e0ad0c472f1... |
+| cover_preview.png | 3964308 | 1df1f2d3c69cc476... |
+| interior.pdf | 6452606 | b52de6c8e046666f... |
+| ledger.jsonl | 8311 | 7ce1d29d448d28c4... |
 | pages/01_a-cozy-owl-wearing-a-striped-scarf-sitti.png | 428982 | 89e525991913f346... |
 | pages/02_a-smiling-polar-bear-cub-building-a-smal.png | 368287 | 9a386932ab140f9b... |
 | pages/03_two-penguins-sliding-on-their-bellies-ac.png | 388167 | bda6f1a0e611a848... |
@@ -23,7 +23,7 @@ Upload to KDP: `interior.pdf` (manuscript) and `cover.pdf` (cover). Listing text
 | pages/08_a-seal-balancing-a-ball-on-its-nose-on-a.png | 386285 | 6e45706f368be5a2... |
 | pages/09_a-cat-in-mittens-looking-out-of-a-frosty.png | 416491 | f9eb63e39273e541... |
 | pages/10_a-puppy-wearing-a-scarf-pulling-a-small-.png | 388580 | f205558d4785692b... |
-| pages/11_a-moose-wearing-mittens-and-a-bobble-hat.png | 395713 | 248143267cae8926... |
+| pages/11_a-moose-with-wide-flat-antlers-wearing-m.png | 405950 | e36c96dbb3b929a3... |
 | pages/12_a-cute-whale-surfacing-between-icebergs.png | 368548 | 2dd9115de5680c65... |
 | pages/13_a-chickadee-bird-on-a-snowy-berry-branch.png | 425082 | 44fc548a794fcc73... |
 | pages/14_a-beaver-in-a-woolly-hat-carrying-a-log.png | 415178 | 21856556ede771d9... |
@@ -40,6 +40,6 @@ Upload to KDP: `interior.pdf` (manuscript) and `cover.pdf` (cover). Listing text
 | pages/25_a-cozy-cabin-with-smoke-curling-from-the.png | 493301 | eb6d8e3cd62553f6... |
 | pages/26_a-frog-in-a-tiny-sweater-on-a-frosty-lil.png | 432230 | 9377b56afcf5f7f8... |
 | pages/27_a-big-snowflake-with-a-tiny-friendly-owl.png | 425098 | 666b9f809bba0b1f... |
-| pages/28_a-group-of-animals-having-a-picnic-in-th.png | 515136 | 757fdea22bb617bb... |
+| pages/28_a-bear-a-rabbit-and-a-penguin-sharing-co.png | 464795 | bd64dd854b081455... |
 | pages/29_a-squirrel-and-a-chipmunk-ice-skating-to.png | 427518 | 1a2d3e12a56f2ff7... |
 | pages/30_a-sleepy-fox-curled-up-in-the-snow-with-.png | 359741 | 8ce85c49fbed3a91... |
