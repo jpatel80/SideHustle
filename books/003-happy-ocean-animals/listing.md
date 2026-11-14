@@ -28,7 +28,7 @@ Generated 2026-11-14 by `scripts/book_factory.py` from `book.json`. Do not edit 
 
 **Description** (paste as is; the box accepts this formatting):
 ```
-Dive into a sea of smiles! This first coloring book has 30 big, simple pictures of friendly ocean animals, from a happy whale and a waving octopus to a sea turtle, a crab, a jellyfish and a dolphin leaping over a wave. Every picture has extra-thick lines and large open spaces, made for toddlers and little hands that are just starting to color.<br><br>
+Dive into a sea of smiles! This first coloring book has 30 big, simple pictures of friendly ocean animals, from a happy whale and a curly-armed octopus to a sea turtle, a crab, a jellyfish and a dolphin leaping over a wave. Every picture has extra-thick lines and large open spaces, made for toddlers and little hands that are just starting to color.<br><br>
 <b>What's inside</b><br>
 &bull; 30 one-sided coloring pages, with a blank page behind each picture<br>
 &bull; One big, simple subject on every page, with very few small details<br>
