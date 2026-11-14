@@ -1,0 +1,50 @@
+{
+  "_help": "Copy to books/NNN-slug/book.json, delete this line, fill every field. Then: python3 scripts/book_factory.py check books/NNN-slug",
+  "title": "<Theme> Coloring Book",
+  "subtitle": "50 Bold and Easy Pictures for Kids Ages 3-6",
+  "author": "Wren Ashby",
+  "imprint": "Little Fox Paper Co",
+  "audience": "kids",
+  "reading_age": [
+    3,
+    6
+  ],
+  "theme": "winter | ocean | garden",
+  "badge": "50|BIG PICTURES|TO COLOR!",
+  "cover_art": 1,
+  "title_art": 1,
+  "stickers": [
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "seed": 3,
+  "blurb": [
+    "50 <things> ready to be colored.",
+    "One big, bold picture on every page.",
+    "Single-sided pages with a blank page behind each picture.",
+    "The inside pages are black and white. The colors on the cover are just an example!"
+  ],
+  "description": "<lead paragraph><br><br>\n<b>What's inside</b><br>\n&bull; 50 one-sided coloring pages<br>\n<br>\nThe inside pages are printed in black and white, ready for you to color. The colors on the cover are just an example.<br><br>\nThe illustrations in this book were generated with AI image tools and were selected and arranged by the publisher, Little Fox Paper Co.",
+  "keywords": [
+    "seven phrases",
+    "from research_niches.py",
+    "each 50 characters or fewer",
+    "no brands",
+    "no educational claims",
+    "no health claims",
+    "describe the real book"
+  ],
+  "categories": [
+    "up to three category paths"
+  ],
+  "price_usd": 9.99,
+  "budget_usd": 4.0,
+  "model": "openai/gpt-image-2",
+  "quality": "low",
+  "published": null,
+  "niche_keyword": "the GO keyword from research/niches_*.md this book was built for",
+  "notes": []
+}
